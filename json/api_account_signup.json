@@ -1,0 +1,34 @@
+{
+    "POST_200": {
+        "data": {
+            "success": true,
+            "message": "User created with success",
+            "user": {
+                "id": 111,
+                "userStatus": 3,
+                "userType": 3,
+                "name": "Rodrigo Lopes",
+                "email": "rodrigo.lopes@olx.com",
+                "phone": "123123123",
+                "phone_region": "PT",
+                "username": "rlopes",
+                "country": "PT",
+                "company": "OLX"
+            }
+        }
+    },
+    "POST_400": {
+        "data": {
+            "success": false,
+            "message": "Duplicated email"
+        },
+        "error": {
+            "id": "Exception",
+            "title": "Duplicated email"
+        }
+    },
+    "GET_200": {
+        "id": "Exception",
+        "title": "Duplicated email"
+    }
+}
