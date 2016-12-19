@@ -1,8 +1,10 @@
 # Fake API
 
+# Fake API
+You don't need to wait for backend delivery api any more, you can simulate the api response with this simple faceApi, 
+you can continue developing your frontend without dependencies.
 
-I don't need to wait for backend to develop your frontend page, you can simulate the api
-simple way to show json with same the response of api.
+It is a simple way to mock your api response.
 
 ## Source ##
 
@@ -12,11 +14,12 @@ simple way to show json with same the response of api.
 
 
 ## Seed File ##
-Create a folder's name `json`, The all files inside this folder will be loaded in seed to create urls, defined the name of file to represent the `URL`.
+Create a folder named `json`,
+The all files inside this folder will be loaded in seed file, The file will be defined by name of file.
 
 **e.g.**: If file name is `api_account_signup.json` the url will be `/api/account/signup`.
 
-**The seed needs to follow this format**: format needs to follow this rules, *method*_*status_code*: *response* (the response can be format)
+**The file seed needs to follow this format**: format needs to follow this rules, *method*_*status_code*: *response* (the response can be format)
 ```
 {
     "[METHOD]_[STATUS_CODE]": [RESPONSE]
@@ -51,9 +54,7 @@ curl -X POST "http://localhost:9090/api/account/signup"
 
 You can add more then one response in seeds file, just follow the rule in seed. 
 
-Seed file name is `api_account_user.json` 
-
-**E.g**:
+**E.g**: Seed file name is `api_account_user.json` 
 ```
 {
    "GET_200": {
@@ -76,8 +77,7 @@ Seed file name is `api_account_user.json`
 ```
 
 **Request POST**: 
-when you use multiple status code to response without header to specific status code to response the response will be always random between status codes available for method resquest.
-
+when you are using multiple status, if you request without specify the status code the response will be random between data in seed format with the same method.
 ```
 curl -X POST "/api/account/user"
 ```
@@ -105,7 +105,6 @@ or
 ```
 curl -X POST -H "X-Requested-Code: 400" "/api/account/user"
 ```
-
 
 **Response POST specific**: 
 ```
