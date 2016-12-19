@@ -1,6 +1,5 @@
 # Fake API
 
-# Fake API
 You don't need to wait for backend delivery api any more, you can simulate the api response with this simple faceApi, 
 you can continue developing your frontend without dependencies.
 
