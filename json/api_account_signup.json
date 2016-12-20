@@ -1,8 +1,8 @@
 {
-    "POST_200": {
+    "POST_201": {
         "data": {
             "success": true,
-            "message": "User created with success",
+            "message": "Thanks for registering, Please check your email and click the link to confirm it.",
             "user": {
                 "id": 111,
                 "userStatus": 3,
@@ -24,11 +24,10 @@
         },
         "error": {
             "id": "Exception",
-            "title": "Duplicated email"
+            "title": "Duplicated email",
+            "detail": {
+                "field": "email"
+            }
         }
-    },
-    "GET_200": {
-        "id": "Exception",
-        "title": "Duplicated email"
     }
 }

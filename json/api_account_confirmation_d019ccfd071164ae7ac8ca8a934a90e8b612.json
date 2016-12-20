@@ -1,5 +1,5 @@
 {
-    "GET_201": {
+    "GET_200": {
         "data": {
             "success": true,
             "message": "User was activated with success",

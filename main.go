@@ -20,12 +20,13 @@ func init() {
 
 func handler(ctx *macaron.Context, eps *settings.Endpoints) {
 	var lookingFor string
-	header := ctx.Req.Header["X-Requested-Code"]
+	header := ctx.Req.Header["X-Response-Code"]
 	if len(header) == 0 {
 		var e map[string]interface{}
 		e = eps.Endpoints
 		lookingFor = tools.RandMapString(e, ctx.Req.Method)
 	} else {
+
 		lookingFor = fmt.Sprintf("%v_%v", ctx.Req.Method, ctx.Req.Header["X-Response-Code"][0])
 	}
 
@@ -67,7 +68,7 @@ func Middleware(ctx *macaron.Context) {
 	if settings.Api.CrossDomain {
 		ctx.Header().Add("Access-Control-Allow-Origin", "*")
 		ctx.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Requested-Code")
+		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Response-Code")
 		ctx.Header().Add("Access-Control-Max-Age", "86400")
 	}
 	ctx.Next()
