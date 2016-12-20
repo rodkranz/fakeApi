@@ -1,17 +1,17 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"encoding/json"
 
 	"gopkg.in/macaron.v1"
 
-	"github.com/rodkranz/fakeApi/module/tools"
 	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/module/tools"
 	"log"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func init() {
@@ -86,6 +86,6 @@ func main() {
 	m.Any("/*", findMatch)
 
 	log.Println("Server is running...")
-	log.Println("Access from http://0.0.0.0:4000/")
-	log.Println(http.ListenAndServe("0.0.0.0:4000", m))
+	log.Println("Access from http://0.0.0.0:9090/")
+	log.Println(http.ListenAndServe("0.0.0.0:9090", m))
 }
