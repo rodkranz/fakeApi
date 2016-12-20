@@ -100,9 +100,9 @@ or
 }
 ```
 
-**Request POST**: use the header with name `X-Requested-Code` to specify the response that you want to receive.
+**Request POST**: use the header with name `X-Response-Code` to specify the response that you want to receive.
 ```
-curl -X POST -H "X-Requested-Code: 400" "/api/account/user"
+curl -X POST -H "X-Response-Code: 400" "/api/account/user"
 ```
 
 **Response POST specific**: 
