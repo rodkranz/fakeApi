@@ -1,71 +1,70 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"gopkg.in/macaron.v1"
 
 	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/module/files"
 	"github.com/rodkranz/fakeApi/module/tools"
-	"log"
-	"strconv"
-	"strings"
+	"github.com/rodkranz/fakeApi/module/entity"
 )
 
-func init() {
-	settings.AutoLoad("json")
-}
-
-func handler(ctx *macaron.Context, eps *settings.Endpoints) {
-	var lookingFor string
-	header := ctx.Req.Header["X-Response-Code"]
-	if len(header) == 0 {
-		var e map[string]interface{}
-		e = eps.Endpoints
-		lookingFor = tools.RandMapString(e, ctx.Req.Method)
-	} else {
-
-		lookingFor = fmt.Sprintf("%v_%v", ctx.Req.Method, ctx.Req.Header["X-Response-Code"][0])
-	}
-
-	val, has := eps.Endpoints[lookingFor]
-	if !has {
+func findMatch(ctx *macaron.Context) {
+	file := tools.UrlToPath(ctx.Req.URL.Path[1:])
+	if files.IsNotExist(file) {
 		ctx.Next()
 		return
 	}
 
-	data, err := json.Marshal(val)
-	if err != nil {
-		ctx.Error(http.StatusInternalServerError, err.Error())
+	var endpoint map[string]interface{} = entity.Endpoint{}
+	if err := files.Load(file, endpoint); err != nil {
+		log.Printf("Error to load file %v: %v", file, err.Error())
+		ctx.Next()
+
 		return
 	}
 
-	status, err := strconv.ParseInt(strings.Split(lookingFor, "_")[1], 10, 64)
-	if err != nil {
-		status = 200
+	status, has := tools.HeaderExtract(ctx.Req.Header, "X-Response-Code")
+	if has {
+		status = fmt.Sprintf("%v_%v", ctx.Req.Method, status)
+	} else {
+		status, has = tools.RandMapString(endpoint, ctx.Req.Method)
 	}
 
-	ctx.WriteHeader(int(status))
+	if !has {
+		log.Printf("Error to find rule: %v", status)
+		ctx.WriteHeader(http.StatusNotFound)
+		ctx.Write([]byte("{\"error\": \"Status not found\", \"detail\": \"" + status + "\"}"))
+		return
+	}
+
+	resp, has := endpoint[status]
+	if !has {
+		log.Printf("Status not found: %v", status)
+		ctx.WriteHeader(http.StatusNotFound)
+		ctx.Write([]byte("{\"error\": \"Url/Status not found\", \"detail\": \"" + status + "\"}"))
+		return
+	}
+
+	data, err := tools.StructToJson(resp)
+	if err != nil {
+		log.Printf("Error to convert struct to json: %v", err)
+		ctx.WriteHeader(http.StatusInternalServerError)
+		ctx.Write([]byte("{\"error\": \"Seed file has error\", \"detail\": \"" + err.Error() + "\"}"))
+		return
+	}
+
 	ctx.Write(data)
 }
 
-func findMatch(ctx *macaron.Context) {
-	for _, ep := range settings.Api.Eps {
-		if ctx.Req.URL.Path == ep.Url {
-			handler(ctx, ep)
-			return
-		}
-	}
-
-	ctx.Write([]byte("Not Found"))
-}
-
 func Middleware(ctx *macaron.Context) {
-	ctx.Header().Add("Server", settings.Api.Title)
+	ctx.Header().Add("Server", settings.Title)
 	ctx.Header().Add("Content-Type", "application/json")
-	if settings.Api.CrossDomain {
+	if settings.CrossDomain {
 		ctx.Header().Add("Access-Control-Allow-Origin", "*")
 		ctx.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Response-Code")
@@ -74,9 +73,17 @@ func Middleware(ctx *macaron.Context) {
 	ctx.Next()
 }
 
-func handleOptions(ctx *macaron.Context) string {
+func handleOptions(ctx *macaron.Context) {
 	ctx.Resp.WriteHeader(http.StatusOK)
-	return ""
+}
+
+func notFound(ctx *macaron.Context) string {
+	ctx.Resp.WriteHeader(http.StatusNotFound)
+	return "Not found"
+}
+func internalServerError(ctx *macaron.Context, err error) string {
+	ctx.Resp.WriteHeader(http.StatusInternalServerError)
+	return "Internal server Error: " + err.Error()
 }
 
 func main() {
@@ -84,7 +91,10 @@ func main() {
 	m.Use(Middleware)
 
 	m.Options("/*", handleOptions)
-	m.Any("/*", findMatch)
+	m.Any("*", findMatch)
+
+	m.NotFound(notFound)
+	m.InternalServerError(internalServerError)
 
 	log.Println("Server is running...")
 	log.Println("Access from http://0.0.0.0:9090/")

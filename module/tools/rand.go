@@ -37,12 +37,15 @@ func RandSliceInterface(list []interface{}) interface{} {
 	return list[RandInt(0, len(list))]
 }
 
-func RandMapString(m map[string]interface{}, prefix string) string {
+func RandMapString(m map[string]interface{}, prefix string) (string, bool) {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		if strings.HasPrefix(k, prefix) {
 			keys = append(keys, k)
 		}
 	}
-	return keys[RandInt(0, len(keys))]
+	if len(keys) == 0 {
+		return "", false
+	}
+	return keys[RandInt(0, len(keys))], true
 }
