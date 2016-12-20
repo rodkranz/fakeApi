@@ -1,6 +1,6 @@
 # Fake API
 
-You don't need to wait for backend delivery api any more, you can simulate the api response with this simple faceApi, 
+You don't need to wait for backend delivery your api any more, you can simulate the api response with this simple fakeApi, 
 you can continue developing your frontend without dependencies.
 
 It is a simple way to mock your api response.
@@ -13,12 +13,12 @@ It is a simple way to mock your api response.
 
 
 ## Seed File ##
-Create a folder named `json`,
-The all files inside this folder will be loaded in seed file, The file will be defined by name of file.
+In a folder named `json`, it needs to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load it.
+Use the file name to define the *URL* of api.
 
 **e.g.**: If file name is `api_account_signup.json` the url will be `/api/account/signup`.
 
-**The file seed needs to follow this format**: format needs to follow this rules, *method*_*status_code*: *response* (the response can be format)
+**The file seed needs to follow this format**: the format need to follow this rules, *method*_*status_code*: *response* (Response can be any format)
 ```
 {
     "[METHOD]_[STATUS_CODE]": [RESPONSE]
@@ -51,7 +51,7 @@ curl -X POST "http://localhost:9090/api/account/signup"
 
 ## Multiples Response for seed ##
 
-You can add more then one response in seeds file, just follow the rule in seed. 
+You can add more then one response in seeds file for the same method and different methods too, just follow the rule in seed. 
 
 **E.g**: Seed file name is `api_account_user.json` 
 ```
@@ -76,7 +76,7 @@ You can add more then one response in seeds file, just follow the rule in seed.
 ```
 
 **Request POST**: 
-when you are using multiple status, if you request without specify the status code the response will be random between data in seed format with the same method.
+when you are using multiple response and no specify the status code in your header request, the response will be random between data that you putting in your seed file.
 ```
 curl -X POST "/api/account/user"
 ```
@@ -100,7 +100,7 @@ or
 }
 ```
 
-**Request POST**: use the header with name `X-Response-Code` to specify the response that you want to receive.
+**Request POST**: use the header `X-Response-Code` to specify the response that you want to receive.
 ```
 curl -X POST -H "X-Response-Code: 400" "/api/account/user"
 ```
