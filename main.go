@@ -16,15 +16,16 @@ import (
 func findMatch(ctx *macaron.Context) {
 	file := tools.UrlToPath(ctx.Req.URL.Path[1:])
 	if files.IsNotExist(file) {
-		ctx.Next()
+		ctx.WriteHeader(http.StatusNotFound)
+		ctx.Write([]byte("{\"error\": \"Seed file is missing.\", \"file\": \"" + file + "\"}"))
 		return
 	}
 
 	var endpoint map[string]interface{} = entity.Endpoint{}
 	if err := files.Load(file, endpoint); err != nil {
 		log.Printf("Error to load file %v: %v", file, err.Error())
-		ctx.Next()
-
+		ctx.WriteHeader(http.StatusInternalServerError)
+		ctx.Write([]byte("{\"error\": \"Load seed file\", \"detail\": \"" + err.Error() + "\"}"))
 		return
 	}
 
