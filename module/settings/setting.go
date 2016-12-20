@@ -18,28 +18,3 @@ func init() {
 	Folder = "json"
 	Urls = make(map[string]entity.Endpoint, 0)
 }
-
-
-//func LoadInfo(p string) error {
-//	data, err := ioutil.ReadFile(p)
-//	if err != nil {
-//		return err
-//	}
-//
-//	ep := &Endpoint{}
-//	if err = ep.Unmarshal(data); err != nil {
-//		log.Fatalf("Something is worng with settings: %v", err.Error())
-//		os.Exit(1)
-//	}
-//
-//	name := path.Base(p)
-//	name = strings.Replace(name, path.Ext(p), "", -1)
-//	name = strings.Replace(name, "_", "/", -1)
-//
-//	eps := &Endpoints{
-//		Url:       fmt.Sprintf("/%v", name),
-//		Endpoints: *ep,
-//	}
-//
-//	Api.RegisterEndpoints(eps)
-//	return nil
