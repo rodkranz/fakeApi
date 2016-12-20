@@ -67,17 +67,25 @@ func Middleware(ctx *macaron.Context) {
 	if settings.Api.CrossDomain {
 		ctx.Header().Add("Access-Control-Allow-Origin", "*")
 		ctx.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Requested-Code")
 		ctx.Header().Add("Access-Control-Max-Age", "86400")
 	}
 	ctx.Next()
 }
 
+func handleOptions(ctx *macaron.Context) string {
+	ctx.Resp.WriteHeader(http.StatusOK)
+	return ""
+}
+
 func main() {
 	m := macaron.Classic()
 	m.Use(Middleware)
+
+	m.Options("/*", handleOptions)
 	m.Any("/*", findMatch)
 
-	log.Println("Listen server http://0.0.0.0:9090/")
-	log.Fatal(http.ListenAndServe(":9090", m))
+	log.Println("Server is running...")
+	log.Println("Access from http://0.0.0.0:4000/")
+	log.Println(http.ListenAndServe("0.0.0.0:4000", m))
 }
