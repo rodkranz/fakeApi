@@ -50,12 +50,12 @@ It is a simple way to mock your api response.
 
 
 ## Seed File ##
-In a folder named `json`, it needs to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load it.
+In a folder named `json`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
 Use the file name to define the *URL* of api.
 
 **e.g.**: If file name is `api_account_signup.json` the url will be `/api/account/signup`.
 
-**The file seed needs to follow this format**: the format need to follow this rules, *method*_*status_code*: *response* (Response can be any format)
+**The file seed needs to follow this format**: the seed file needs to follow this rules, *method*_*status_code*: *response* (Response can be any format)
 ```
 {
     "[METHOD]_[STATUS_CODE]": [RESPONSE]
