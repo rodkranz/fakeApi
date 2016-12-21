@@ -12,6 +12,43 @@ It is a simple way to mock your api response.
 * License: ISC
 
 
+## How to Compile it
+
+ You can see the full available binary list [here](https://gobuild.io/rodkranz/fakeApi)
+ or compile those files from different platforms in your owner computer.
+
+## Download
+
+   Download for [Mac OSx](fake-api_darwin_amd64.tar.gz)
+
+   Download for [Linux 386](fake-api_linux_386.tar.gz)
+
+   Download for [Linux amd64](fake-api_linux_amd64.tar.gz)
+
+   Download for [Linux arm](fake-api_windows_386.tar.gz)
+
+   Download for [Windows 386](fake-api_windows_amd64.tar.gz)
+
+
+## Requirements
+
+* [GO Language](https://golang.org/doc/install)
+
+#### Compiling to *Linux*
+
+	$ env GOOS=linux GOARCH=arm GOARM=7 go build -o fakeApi main.go
+
+
+#### Compiling to *MacOSX*
+
+	$ env GOOS=darwin GOARCH=386 go build -o fakeApi main.go
+
+
+#### Compiling to *Windows*
+
+	$ env GOOS=windows GOARCH=386 go build -o fakeApi.exe main.go
+
+
 ## Seed File ##
 In a folder named `json`, it needs to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load it.
 Use the file name to define the *URL* of api.

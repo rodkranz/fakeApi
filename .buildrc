@@ -1,0 +1,27 @@
+[
+     {
+        "os": "darwin",
+        "arch": "amd64",
+        "filename": "fakeApi"
+    },
+    {
+        "os": "linux",
+        "arch": "386",
+        "filename": "fakeApi"
+    },
+    {
+        "os": "linux",
+        "arch": "amd64",
+        "filename": "fakeApi"
+    },
+    {
+        "os": "windows",
+        "arch": "386",
+        "filename": "fakeApi.exe"
+    },
+    {
+        "os": "windows",
+        "arch": "amd64",
+        "filename": "fakeApi.exe"
+    }   
+]
