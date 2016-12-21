@@ -19,15 +19,15 @@ It is a simple way to mock your api response.
 
 ## Download
 
-   Download for [Mac OSx](fake-api_darwin_amd64.tar.gz)
+   Download for [Mac OSx](http://tmpcode.com/fake-api/fake-api_darwin_amd64.tar.gz)
 
-   Download for [Linux 386](fake-api_linux_386.tar.gz)
+   Download for [Linux 386](http://tmpcode.com/fake-api/fake-api_linux_386.tar.gz)
 
-   Download for [Linux amd64](fake-api_linux_amd64.tar.gz)
+   Download for [Linux amd64](http://tmpcode.com/fake-api/fake-api_linux_amd64.tar.gz)
 
-   Download for [Linux arm](fake-api_windows_386.tar.gz)
+   Download for [Windows 386](http://tmpcode.com/fake-api/fake-api_windows_386.tar.gz)
 
-   Download for [Windows 386](fake-api_windows_amd64.tar.gz)
+   Download for [Windows 64](http://tmpcode.com/fake-api/fake-api_windows_amd64.tar.gz)
 
 
 ## Requirements

@@ -10,10 +10,10 @@ import (
 
 	"gopkg.in/macaron.v1"
 
-	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/module/files"
-	"github.com/rodkranz/fakeApi/module/tools"
 	"github.com/rodkranz/fakeApi/module/entity"
+	"github.com/rodkranz/fakeApi/module/files"
+	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/module/tools"
 )
 
 func findMatch(ctx *macaron.Context) {
@@ -74,7 +74,7 @@ func Middleware(ctx *macaron.Context) {
 	if settings.CrossDomain {
 		ctx.Header().Add("Access-Control-Allow-Origin", "*")
 		ctx.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Response-Code")
+		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Response-Code, Cache-Control")
 		ctx.Header().Add("Access-Control-Max-Age", "86400")
 	}
 	ctx.Next()
