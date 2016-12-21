@@ -62,6 +62,9 @@ func findMatch(ctx *macaron.Context) {
 		return
 	}
 
+	_, statusCode := tools.SplitMethodAndStatus(status)
+
+	ctx.WriteHeader(statusCode)
 	ctx.Write(data)
 }
 
