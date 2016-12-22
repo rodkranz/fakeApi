@@ -1,0 +1,5 @@
+[base]
+domain = hecate.com
+
+[headers]
+X-Server-Domain = Hecate api fake
