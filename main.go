@@ -4,13 +4,14 @@
 package main
 
 import (
+	"os"
 	"runtime"
 
 	"gopkg.in/urfave/cli.v2"
 
 	"github.com/rodkranz/fakeApi/cmd"
 	"github.com/rodkranz/fakeApi/module/settings"
-	"os"
+
 )
 
 const VER = "1.0.0"

@@ -10,8 +10,8 @@ import (
 	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
 
-	"github.com/rodkranz/fakeApi/router"
-	"github.com/rodkranz/fakeApi/Middleware"
+	routeApi "github.com/rodkranz/fakeApi/router/api"
+	"github.com/rodkranz/fakeApi/module/context"
 )
 
 var Server = &cli.Command{
@@ -25,23 +25,29 @@ var Server = &cli.Command{
 func newMacaron() *macaron.Macaron {
 	m := macaron.New()
 
-	// Server name
-	m.Use(middleware.ServerName)
-	// Cross domain
-	m.Use(middleware.CrossDomain)
+	m.Use(macaron.Renderer(macaron.RenderOptions{
+		IndentJSON:        macaron.Env != macaron.PROD,
+	}))
 
+	m.Use(context.Contexter())
 	return m
 }
 
-
-func runServer(c *cli.Context) error {
+func runServer(ctx *cli.Context) error {
 	m := newMacaron()
 
-	m.Options("/*", router.HandleOptions)
-	m.Any("*", router.FakeApi)
+	m.Group("/api", func() {
+		// Any Request with options will return 200.
+		m.Options("/*", routeApi.HandleOptions)
 
-	m.NotFound(router.NotFound)
-	m.InternalServerError(router.InternalServerError)
+		// Fake Api Dynamic Routers
+		m.Group("/", func() {
+
+			m.Any("/*", routeApi.FakeApi)
+
+		}, context.APIContexter())
+	})
+
 
 	log.Println("Server is running...")
 	log.Println("Access from http://0.0.0.0:9090/")
