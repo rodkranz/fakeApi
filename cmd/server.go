@@ -14,7 +14,7 @@ import (
 	"github.com/rodkranz/fakeApi/Middleware"
 )
 
-var CmdServer = &cli.Command{
+var Server = &cli.Command{
 	Name:        "server",
 	Usage:       "Run Fake API Server",
 	Description: `Start server fake.`,
@@ -26,9 +26,9 @@ func newMacaron() *macaron.Macaron {
 	m := macaron.New()
 
 	// Server name
-	m.Use(Middleware.ServerName)
+	m.Use(middleware.ServerName)
 	// Cross domain
-	m.Use(Middleware.CrossDomain)
+	m.Use(middleware.CrossDomain)
 
 	return m
 }

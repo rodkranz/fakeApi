@@ -26,7 +26,8 @@ func main() {
 		Usage: "Build a api server",
 		Version: VER,
 		Commands: []*cli.Command{
-			cmd.CmdServer,
+			cmd.Server,
+			cmd.Docs,
 		},
 	}
 

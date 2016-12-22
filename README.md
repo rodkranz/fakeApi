@@ -48,6 +48,10 @@ It is a simple way to mock your api response.
 
 	$ env GOOS=windows GOARCH=386 go build -o fakeApi.exe main.go
 
+## Execute ##
+
+Execute `./fakeApi server` to start server.
+
 
 ## Seed File ##
 In a folder named `json`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
