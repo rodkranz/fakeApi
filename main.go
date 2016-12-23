@@ -34,7 +34,7 @@ func main() {
 	app.Flags = append(app.Flags, []cli.Flag{}...)
 
 	if len(os.Args) == 1 {
-		os.Args = append(os.Args, "server")
+		os.Args = append(os.Args, cmd.Server.Name)
 	}
 
 	app.Run(os.Args)
