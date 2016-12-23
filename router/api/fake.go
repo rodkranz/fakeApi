@@ -5,12 +5,13 @@ package router
 
 import (
 	"github.com/rodkranz/fakeApi/module/context"
-
+	"github.com/rodkranz/fakeApi/module/fakeApi"
 )
 
-func FakeApi(ctx *context.APIContext) {
+func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
+
 	// Validate if file exists if not render error 404.
-	isFileExists(ctx)
+	isFileExists(ctx, fakeApi)
 	if ctx.Written() {
 		return
 	}
@@ -22,7 +23,7 @@ func FakeApi(ctx *context.APIContext) {
 	}
 
 	// Find data and retrieve
-	data := getDataByHeaderResponseCode(ctx)
+	data := getDataByHeaderResponseCode(ctx, fakeApi)
 	if ctx.Written() {
 		return
 	}

@@ -19,11 +19,6 @@ func PathToUrl(p string) string {
 	return fmt.Sprintf("%v/%v", settings.Folder, file)
 }
 
-func UrlToPath(url string) string {
-	file := strings.Replace(url, "/", "_", -1)
-	return fmt.Sprintf("%v/%v.json", settings.Folder, file)
-}
-
 func StructToJson(i interface{}) ([]byte, error) {
 	return json.Marshal(i)
 }

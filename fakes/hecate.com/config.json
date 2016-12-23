@@ -1,5 +1,6 @@
-[base]
-domain = hecate.com
+{
 
-[headers]
-X-Server-Domain = Hecate api fake
+    "headers": {
+        "X-Name-Fake": "Lorem Bacon"
+    }
+}

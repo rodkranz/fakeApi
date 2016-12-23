@@ -23,8 +23,6 @@ func NotFound(ctx *context.APIContext) {
 	})
 }
 
-
-
 func InternalServerError(ctx *context.APIContext) {
 	status := http.StatusInternalServerError
 

@@ -12,6 +12,8 @@ import (
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	"github.com/rodkranz/fakeApi/module/context"
+	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/module/settings"
 )
 
 var Server = &cli.Command{
@@ -27,6 +29,11 @@ func newMacaron() *macaron.Macaron {
 
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		IndentJSON:        macaron.Env != macaron.PROD,
+	}))
+
+	m.Use(fakeApi.Register(fakeApi.ApiFakeOptions{
+		DefaultApi: "default",
+		BaseFolder: settings.Folder,
 	}))
 
 	m.Use(context.Contexter())

@@ -6,12 +6,10 @@ package settings
 var (
 	APP_VER     string
 	CrossDomain bool
-	Title       string
 	Folder      string
 )
 
 func init() {
 	CrossDomain = true
-	Title = "GoLang"
-	Folder = "json"
+	Folder = "fakes"
 }

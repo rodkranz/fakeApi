@@ -5,24 +5,29 @@ package router
 
 import (
 	"fmt"
+	"path"
 	"net/http"
 
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/tools"
 	"github.com/rodkranz/fakeApi/module/files"
 	"github.com/rodkranz/fakeApi/module/entity"
+	"github.com/rodkranz/fakeApi/module/fakeApi"
+
 )
 
 // isFileExists get url and check if file exists in seed folder
 // if not exist set 404 error.
-func isFileExists(ctx *context.APIContext) string {
-	file := tools.UrlToPath(ctx.Req.URL.Path[1:])
-	if files.IsNotExist(file) {
+func isFileExists(ctx *context.APIContext, fake *fakeApi.ApiFake) string {
+	file, err := fake.GetSeedPath()
+
+	if err != nil {
 		ctx.Error(
 			http.StatusNotFound,
-			"Seed file is missing",
+			err.Error(),
 			map[string]interface{}{
-				"file_name": file,
+				"domain":    fake.Domain,
+				"file_name": path.Base(file),
 			})
 	}
 
@@ -53,29 +58,24 @@ func loadSeedFile(ctx *context.APIContext) (endpoint map[string]interface{}) {
 	return
 }
 
-
 // getDataByHeaderResponseCode returns data belongs url + method + status
-func getDataByHeaderResponseCode(ctx *context.APIContext) interface{} {
+func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake) interface{} {
 	endpoint := ctx.Data["endpoints"].(map[string]interface{})
 
-	// Get status code and method if it doesn't exist get random
-	status, has := tools.HeaderExtract(ctx.Req.Header, "X-Response-Code")
-	if has {
-		status = fmt.Sprintf("%v_%v", ctx.Req.Method, status)
-	} else {
-		status, has = tools.RandMapString(endpoint, ctx.Req.Method)
+	method, status, has := fake.GetMethodAndStatusCode()
+	if !has {
+		method_status, _ := tools.RandMapString(endpoint, method)
+		method, status = tools.SplitMethodAndStatus(method_status)
 	}
-
-
-	// split method and status
-	method, statusCode := tools.SplitMethodAndStatus(status)
 
 	// set in context to share with application
 	ctx.Data["method"] = method
-	ctx.Data["status_code"] = statusCode
+	ctx.Data["status_code"] = status
+
+	method_status := fmt.Sprintf("%v_%v", method, status)
 
 	// if find response return and finish function
-	if data, has := endpoint[status]; has {
+	if data, has := endpoint[method_status]; has {
 		return data
 	}
 
@@ -84,9 +84,10 @@ func getDataByHeaderResponseCode(ctx *context.APIContext) interface{} {
 		http.StatusNotFound,
 		"Method in seed file not found.",
 		map[string]interface{}{
-			"status_code":  statusCode,
+			"status_code":  status,
 			"method":       method,
-			"file_name":    ctx.Data["seed_file"],
+			"domain":       fake.Domain,
+			"file_name":    path.Base(ctx.Data["seed_file"].(string)),
 		})
 
 	return nil

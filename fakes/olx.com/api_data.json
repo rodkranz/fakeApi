@@ -1,0 +1,18 @@
+{
+    "GET_200": {
+        "data": {
+            "success": true,
+            "message": "Thanks for registering, Please check your email and click the link to confirm it.",
+            "user": {
+                "id": 1,
+                "name": "Rodrigo Lopes",
+                "email": "rodrigo.lopes@olx.com",
+                "phone": "000000000",
+                "phone_region": "PT",
+                "username": "rlopes",
+                "country": "PT",
+                "company": "OLX"
+            }
+        }
+    }
+}
