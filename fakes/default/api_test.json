@@ -1,0 +1,10 @@
+{
+    "GET_200": {
+        "message": "Fake Api is working.",
+        "resource": {
+            "domain": "default",
+            "file_name": "api_test.json"
+        },
+        "status": 500
+    }
+}

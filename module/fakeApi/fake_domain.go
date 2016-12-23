@@ -9,7 +9,8 @@ import (
 	"time"
 	"strconv"
 	"strings"
-	"errors"
+	"log"
+	"path"
 
 	"gopkg.in/macaron.v1"
 )
@@ -51,8 +52,8 @@ func (a *ApiFake) GetSeedPath() (string, error) {
 	urlPath = strings.Replace(urlPath, "#", "_", -1)
 
 	filePath := fmt.Sprintf("%v/%v.json", a.Folder, urlPath)
-	if isNotExist(filePath) {
-		return filePath, errors.New("Seed file is missing")
+	if isNotExist(filePath) && !isNotExist(fmt.Sprintf("%v/%v.json", a.Default, urlPath)) {
+		filePath = fmt.Sprintf("%v/%v.json", a.Default, urlPath)
 	}
 
 	return filePath, nil
@@ -90,7 +91,6 @@ func (a *ApiFake) registerDelay() {
 	a.Delay = int(i)
 }
 
-
 // fetchHeaderData returns first data from header
 func (a *ApiFake) fetchHeaderData(name string) (string, bool) {
 	values, has := a.Context.Req.Header[name]
@@ -106,7 +106,6 @@ func (a *ApiFake) fetchHeaderData(name string) (string, bool) {
 	return "", false
 }
 
-
 func isNotExist(path string) bool {
 	_, err := os.Stat(path)
 	return os.IsNotExist(err)
@@ -114,6 +113,22 @@ func isNotExist(path string) bool {
 
 // Register Register fake api service
 func Register(opt ApiFakeOptions) macaron.Handler {
+
+	// Check if fakes folder exist
+	if isNotExist(opt.BaseFolder) {
+		if err := os.Mkdir(opt.BaseFolder, 0755); err != nil {
+			log.Fatalf("Please create a 'fakes' folder: [%v]", opt.BaseFolder)
+		}
+	}
+
+	// Check if default folder in faker exist
+	p := path.Join(opt.BaseFolder, opt.DefaultApi)
+	if isNotExist(p) {
+		if err := os.Mkdir(path.Join(p), 0755); err != nil {
+			log.Fatalf("Please create a 'default' folder: [%v]", p)
+		}
+	}
+
 	return func(ctx *macaron.Context) {
 		api := &ApiFake{
 			Delay:   0,
@@ -131,7 +146,7 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 		ctx.Map(api)
 
 		// Execute handlers
- 		ctx.Next()
+		ctx.Next()
 
 		// Apply delay
 		time.Sleep(time.Duration(api.Delay) * time.Millisecond)

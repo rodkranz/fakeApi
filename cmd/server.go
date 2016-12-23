@@ -14,6 +14,7 @@ import (
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/router/web"
 )
 
 var Server = &cli.Command{
@@ -42,18 +43,19 @@ func newMacaron() *macaron.Macaron {
 
 func runServer(ctx *cli.Context) error {
 	m := newMacaron()
+	m.Get("/", web.Home)
 
 	m.Group("/api", func() {
 		// Any Request with options will return 200.
-		m.Options("/*", routeApi.HandleOptions)
+		m.Options("*", routeApi.HandleOptions)
+
+		m.Get("", web.Docs)
 
 		// Fake Api Dynamic Routers
 		m.Group("/", func() {
-
-			m.Any("/*", routeApi.FakeApi)
-
+			m.Any("*", routeApi.FakeApi)
 		}, context.APIContexter())
-	})
+	}, context.APIContexter())
 
 
 	log.Println("Server is running...")

@@ -4,24 +4,29 @@
 package tools
 
 import (
-	"fmt"
-	"path"
 	"strconv"
 	"strings"
-	"encoding/json"
-
-	"github.com/rodkranz/fakeApi/module/settings"
+	"path"
 )
 
 func PathToUrl(p string) string {
-	file := strings.Replace(p, "_", "/", -1)
-	file = strings.Replace(p, path.Ext(p), "", -1)
-	return fmt.Sprintf("%v/%v", settings.Folder, file)
+	p = strings.Replace(p, path.Ext(p), "", 1)
+
+	p = strings.Replace(p, "__", "#", -1)
+	p = strings.Replace(p, "_", "/", -1)
+	p = strings.Replace(p, "#", "_", -1)
+
+	return p
 }
 
-func StructToJson(i interface{}) ([]byte, error) {
-	return json.Marshal(i)
+func UrLToPath(p string) string {
+	p = strings.Replace(p, "__", "#", -1)
+	p = strings.Replace(p, "/", "_", -1)
+	p = strings.Replace(p, "#", "_", -1)
+
+	return p
 }
+
 
 func SplitMethodAndStatus(s string) (method string, code int) {
 	if !strings.Contains(s, "_") {
