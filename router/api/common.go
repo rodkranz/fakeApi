@@ -51,7 +51,7 @@ func loadSeedFile(ctx *context.APIContext) (endpoint map[string]interface{}) {
 		http.StatusInternalServerError,
 		"Error to read file seed.",
 		map[string]interface{}{
-			"file_name": file,
+			"file_name": path.Base(file),
 			"exception": err.Error(),
 		})
 

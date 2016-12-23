@@ -19,18 +19,23 @@ It is a simple way to mock your api response.
 
 ## Download
 
+ You can just download and use, without compile anything.
+
+
    Download for [Mac OSx](http://tmpcode.com/fake-api/fake-api_darwin_amd64.tar.gz)
 
-   Download for [Linux 386](http://tmpcode.com/fake-api/fake-api_linux_386.tar.gz)
+   Download for [Linux x386](http://tmpcode.com/fake-api/fake-api_linux_386.tar.gz)
 
    Download for [Linux amd64](http://tmpcode.com/fake-api/fake-api_linux_amd64.tar.gz)
 
-   Download for [Windows 386](http://tmpcode.com/fake-api/fake-api_windows_386.tar.gz)
+   Download for [Windows x386](http://tmpcode.com/fake-api/fake-api_windows_386.tar.gz)
 
-   Download for [Windows 64](http://tmpcode.com/fake-api/fake-api_windows_amd64.tar.gz)
+   Download for [Windows x64](http://tmpcode.com/fake-api/fake-api_windows_amd64.tar.gz)
 
 
-## Requirements
+## Requirements to Build
+
+ If you want to build in your own computer you need follow this steps below, if you don't want to build you can download at links above.
 
 * [GO Language](https://golang.org/doc/install)
 
@@ -56,6 +61,8 @@ Execute `./fakeApi` or `./fakeApi server` to start server.
 ## Seed File ##
 In a folder named `./fakes/default`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
 Use the file name to define the *URL* of api.
+
+**P.S.** All files seed needs to start with `api_[ANYTHING]`.
 
 **e.g.**: If file name is `api_account_signup.json` the url will be `/api/account/signup`.
 
@@ -213,4 +220,31 @@ Response example:
 curl ... 0.01s user 0.01s system 0% cpu 3.020 total
 ```
 
+
+## List of links available ##
+
+ You can see which links is available at FakeApi `seed` accessing the link `http://localhost:9090/api`
+ this link will show list of endpoints available.
+
+ Next step will generate docs automatic.
+
+```
+{
+  "domain": "default",
+  "message": "List of endpoints available for this domain",
+  "resource": [
+    "/api/account/change/password/3bf0f2397de50c326346aeb3475d834d1e05e9f",
+    "/api/account/confirmation/d019ccfd071164ae7ac8ca8a934a90e8b612",
+    "/api/account/forgot/rodrigo.lopes@olx.com",
+    "/api/account/signup",
+    "/api/account/token/verify/3bf0f2397de50c326346aeb3475d834d1e05e9f",
+    "/api/account/validate",
+    "/api/test",
+    "/api/user/profile/3bf0f2397de50c326346aeb3475d834d1e05e9f"
+  ],
+  "status": 200
+}
+```
+
+---
 OBS: By default the cross domain is always enabled.

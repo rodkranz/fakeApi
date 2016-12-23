@@ -10,11 +10,11 @@ import (
 	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
 
-	routeApi "gitlab.lisbontechhub.com/devops-gv/fakeApi/router/api"
-	"gitlab.lisbontechhub.com/devops-gv/fakeApi/module/context"
-	"gitlab.lisbontechhub.com/devops-gv/fakeApi/module/fakeApi"
-	"gitlab.lisbontechhub.com/devops-gv/fakeApi/module/settings"
-	"gitlab.lisbontechhub.com/devops-gv/fakeApi/router/web"
+	routeApi "github.com/rodkranz/fakeApi/router/api"
+	"github.com/rodkranz/fakeApi/module/context"
+	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/router/web"
 )
 
 var Server = &cli.Command{
