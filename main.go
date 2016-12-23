@@ -11,10 +11,9 @@ import (
 
 	"github.com/rodkranz/fakeApi/cmd"
 	"github.com/rodkranz/fakeApi/module/settings"
-
 )
 
-const VER = "1.0.0"
+const VER = "1.1.0"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -33,5 +32,10 @@ func main() {
 	}
 
 	app.Flags = append(app.Flags, []cli.Flag{}...)
+
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, "server")
+	}
+
 	app.Run(os.Args)
 }

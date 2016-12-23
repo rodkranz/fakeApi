@@ -1,0 +1,14 @@
+{
+    "GET_200": {
+        "user": {
+            "id": 1,
+            "name": "Rodrigo Lopes",
+            "email": "rodrigo.lopes@olx.com",
+            "phone": "000000000",
+            "phone_region": "PT",
+            "username": "rlopes",
+            "country": "PT",
+            "company": "OLX"
+        }
+    }
+}
