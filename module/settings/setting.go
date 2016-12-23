@@ -7,9 +7,11 @@ var (
 	APP_VER     string
 	CrossDomain bool
 	Folder      string
+	Ext         string
 )
 
 func init() {
 	CrossDomain = true
+	Ext = ".json"
 	Folder = "fakes"
 }

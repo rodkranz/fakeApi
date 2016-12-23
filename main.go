@@ -9,8 +9,8 @@ import (
 
 	"gopkg.in/urfave/cli.v2"
 
-	"github.com/rodkranz/fakeApi/cmd"
-	"github.com/rodkranz/fakeApi/module/settings"
+	"gitlab.lisbontechhub.com/devops-gv/fakeApi/cmd"
+	"gitlab.lisbontechhub.com/devops-gv/fakeApi/module/settings"
 )
 
 const VER = "1.1.0"
