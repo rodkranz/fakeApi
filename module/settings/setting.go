@@ -3,18 +3,13 @@
 // license that can be found in the LICENSE file.
 package settings
 
-import "github.com/rodkranz/fakeApi/module/entity"
-
 var (
+	APP_VER     string
 	CrossDomain bool
-	Title       string
 	Folder      string
-	Urls        map[string]entity.Endpoint
 )
 
 func init() {
 	CrossDomain = true
-	Title = "GoLang"
-	Folder = "json"
-	Urls = make(map[string]entity.Endpoint, 0)
+	Folder = "fakes"
 }

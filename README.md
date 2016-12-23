@@ -8,7 +8,7 @@ It is a simple way to mock your api response.
 ## Source ##
 
 * FakeApi Source
-* Version: 1.0.0
+* Version: 1.1.0
 * License: ISC
 
 
@@ -48,9 +48,13 @@ It is a simple way to mock your api response.
 
 	$ env GOOS=windows GOARCH=386 go build -o fakeApi.exe main.go
 
+## Execute ##
+
+Execute `./fakeApi` or `./fakeApi server` to start server.
+
 
 ## Seed File ##
-In a folder named `json`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
+In a folder named `./fakes/default`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
 Use the file name to define the *URL* of api.
 
 **e.g.**: If file name is `api_account_signup.json` the url will be `/api/account/signup`.
@@ -137,9 +141,9 @@ or
 }
 ```
 
-**Request POST**: use the header `X-Response-Code` to specify the response that you want to receive.
+**Request POST**: use the header `X-Fake-Response-Code` to specify the response that you want to receive.
 ```
-curl -X POST -H "X-Response-Code: 400" "/api/account/user"
+curl -X POST -H "X-Fake-Response-Code: 400" "/api/account/user"
 ```
 
 **Response POST specific**: 
@@ -152,6 +156,61 @@ curl -X POST -H "X-Response-Code: 400" "/api/account/user"
 		"time": "the date is invalid"
 	}
 }
+```
+
+## Multiple Domains ##
+
+if you want to use multiples domain you just add a new folder inside of folder `fakes` and use the
+header to specific the domain name. 
+
+if you don't want to use the custom domain you can use `default` folder for yours files `seed`.
+
+Folders example: 
+```
+➜  fakeApi git:(develop) ✗ ls -la fakes
+total 0
+drwxr-xr-x   3 rlopes  staff   102B 22 Dec 23:34 default/
+drwxr-xr-x   8 rlopes  staff   272B 23 Dec 00:11 hecate.com/
+drwxr-xr-x   3 rlopes  staff   102B 22 Dec 23:33 olx.com/
+```
+
+Request example: 
+
+```
+curl -X POST -H "X-Fake-Domain: hecate.com" "http://localhost:9090/api/account/profile"
+```
+
+Response must be: 
+```
+{
+  "user": {
+    "company": "OLX",
+    "country": "PT",
+    "email": "rodrigo.lopes@olx.com",
+    "id": 1,
+    "name": "Rodrigo Lopes",
+    "phone": "000000000",
+    "phone_region": "PT",
+    "username": "rlopes"
+  }
+}
+```
+
+## Delay of response ##
+
+If you want to simulate delay of response you can use the header `X-Fake-Delay` to do that, use the `Millisecond`
+
+
+Request example: 
+
+```
+time curl -X POST -H "X-Fake-Delay: 3000" -H "X-Fake-Domain: hecate.com" "http://localhost:9090/api/account/profile"
+```
+
+Response example: 
+
+```
+curl ... 0.01s user 0.01s system 0% cpu 3.020 total
 ```
 
 OBS: By default the cross domain is always enabled.

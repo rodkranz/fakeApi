@@ -4,106 +4,38 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
+	"os"
+	"runtime"
 
-	"gopkg.in/macaron.v1"
+	"gopkg.in/urfave/cli.v2"
 
-	"github.com/rodkranz/fakeApi/module/entity"
-	"github.com/rodkranz/fakeApi/module/files"
+	"github.com/rodkranz/fakeApi/cmd"
 	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/module/tools"
 )
 
-func findMatch(ctx *macaron.Context) {
-	file := tools.UrlToPath(ctx.Req.URL.Path[1:])
-	if files.IsNotExist(file) {
-		ctx.WriteHeader(http.StatusNotFound)
-		ctx.Write([]byte("{\"error\": \"Seed file is missing.\", \"file\": \"" + file + "\"}"))
-		return
-	}
+const VER = "1.1.0"
 
-	var endpoint map[string]interface{} = entity.Endpoint{}
-	if err := files.Load(file, endpoint); err != nil {
-		log.Printf("Error to load file %v: %v", file, err.Error())
-		ctx.WriteHeader(http.StatusInternalServerError)
-		ctx.Write([]byte("{\"error\": \"Load seed file\", \"detail\": \"" + err.Error() + "\"}"))
-		return
-	}
-
-	status, has := tools.HeaderExtract(ctx.Req.Header, "X-Response-Code")
-	if has {
-		status = fmt.Sprintf("%v_%v", ctx.Req.Method, status)
-	} else {
-		status, has = tools.RandMapString(endpoint, ctx.Req.Method)
-	}
-
-	if !has {
-		log.Printf("Error to find rule: %v", status)
-		ctx.WriteHeader(http.StatusNotFound)
-		ctx.Write([]byte("{\"error\": \"Status not found\", \"detail\": \"" + status + "\"}"))
-		return
-	}
-
-	resp, has := endpoint[status]
-	if !has {
-		log.Printf("Status not found: %v", status)
-		ctx.WriteHeader(http.StatusNotFound)
-		ctx.Write([]byte("{\"error\": \"Url/Status not found\", \"detail\": \"" + status + "\"}"))
-		return
-	}
-
-	data, err := tools.StructToJson(resp)
-	if err != nil {
-		log.Printf("Error to convert struct to json: %v", err)
-		ctx.WriteHeader(http.StatusInternalServerError)
-		ctx.Write([]byte("{\"error\": \"Seed file has error\", \"detail\": \"" + err.Error() + "\"}"))
-		return
-	}
-
-	_, statusCode := tools.SplitMethodAndStatus(status)
-
-	ctx.WriteHeader(statusCode)
-	ctx.Write(data)
-}
-
-func Middleware(ctx *macaron.Context) {
-	ctx.Header().Add("Server", settings.Title)
-	ctx.Header().Add("Content-Type", "application/json")
-	if settings.CrossDomain {
-		ctx.Header().Add("Access-Control-Allow-Origin", "*")
-		ctx.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		ctx.Header().Add("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Response-Code, Cache-Control")
-		ctx.Header().Add("Access-Control-Max-Age", "86400")
-	}
-	ctx.Next()
-}
-
-func handleOptions(ctx *macaron.Context) {
-	ctx.Resp.WriteHeader(http.StatusOK)
-}
-
-func notFound(ctx *macaron.Context) string {
-	ctx.Resp.WriteHeader(http.StatusNotFound)
-	return "Not found"
-}
-func internalServerError(ctx *macaron.Context, err error) string {
-	ctx.Resp.WriteHeader(http.StatusInternalServerError)
-	return "Internal server Error: " + err.Error()
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	settings.APP_VER = VER
 }
 
 func main() {
-	m := macaron.Classic()
-	m.Use(Middleware)
+	app := cli.App{
+		Name: "FakeApi",
+		Usage: "Build a api server",
+		Version: VER,
+		Commands: []*cli.Command{
+			cmd.Server,
+			cmd.Docs,
+		},
+	}
 
-	m.Options("/*", handleOptions)
-	m.Any("*", findMatch)
+	app.Flags = append(app.Flags, []cli.Flag{}...)
 
-	m.NotFound(notFound)
-	m.InternalServerError(internalServerError)
+	if len(os.Args) == 1 {
+		os.Args = append(os.Args, cmd.Server.Name)
+	}
 
-	log.Println("Server is running...")
-	log.Println("Access from http://0.0.0.0:9090/")
-	log.Println(http.ListenAndServe("0.0.0.0:9090", m))
+	app.Run(os.Args)
 }

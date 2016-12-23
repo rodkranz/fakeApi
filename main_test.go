@@ -1,13 +1,15 @@
 // Copyright 2016 Kranz. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package files
+package main_test
 
 import (
+	"testing"
 	"os"
+	"flag"
 )
 
-func IsNotExist(path string) bool {
-	_, err := os.Stat(path)
-	return os.IsNotExist(err)
+func TestMain(m *testing.M) {
+	flag.Parse()
+	os.Exit(m.Run())
 }
