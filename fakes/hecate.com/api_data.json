@@ -1,5 +1,8 @@
 {
     "GET_200": {
         "lorem": "Bacon!"
+    },
+    "POST_200": {
+        "post": "Success"
     }
 }

@@ -6,6 +6,7 @@ package fakeApi
 import (
 	"os"
 	"fmt"
+	"time"
 	"strconv"
 	"strings"
 	"errors"
@@ -126,7 +127,13 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 		api.registerDomain()
 		api.registerDelay()
 
+		// Share FakeApi Module for all handlers
 		ctx.Map(api)
+
+		// Execute handlers
  		ctx.Next()
+
+		// Apply delay
+		time.Sleep(time.Duration(api.Delay) * time.Millisecond)
 	}
 }
