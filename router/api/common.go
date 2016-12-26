@@ -1,7 +1,7 @@
 // Copyright 2016 Kranz. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package router
+package api
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ import (
 // isFileExists get url and check if file exists in seed folder
 // if not exist set 404 error.
 func isFileExists(ctx *context.APIContext, fake *fakeApi.ApiFake) string {
-	file, err := fake.GetSeedPath()
+	file, err := fake.GetSeedPath("")
 
 	if err != nil {
 		ctx.Error(
