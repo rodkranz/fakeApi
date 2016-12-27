@@ -29,9 +29,10 @@ type ApiFake struct {
 	Headers map[string]string
 }
 
+// GetMethodAndStatusCode return method, status code and bool if found or not
 func (a *ApiFake) GetMethodAndStatusCode() (string, int, bool) {
 	// Get status code and method if it doesn't exist get random
-	status, has := a.fetchHeaderData("X-Fake-Response-Code")
+	status, has := a.getHeaderData("X-Fake-Response-Code")
 	if !has {
 		return a.Context.Req.Method, a.Context.Resp.Status(), false
 	}
@@ -45,15 +46,18 @@ func (a *ApiFake) GetMethodAndStatusCode() (string, int, bool) {
 }
 
 // GetSeedPath returns the path of seed file.
-func (a *ApiFake) GetSeedPath() (string, error) {
-	urlPath := a.Context.Req.URL.Path[1:]
-	urlPath = strings.Replace(urlPath, "__", "#", -1)
-	urlPath = strings.Replace(urlPath, "/", "_", -1)
-	urlPath = strings.Replace(urlPath, "#", "_", -1)
+func (a *ApiFake) GetSeedPath(seed string) (string, error) {
+	if len(seed) == 0 {
+		seed = a.Context.Req.URL.Path[1:]
+	}
 
-	filePath := fmt.Sprintf("%v/%v.json", a.Folder, urlPath)
-	if isNotExist(filePath) && !isNotExist(fmt.Sprintf("%v/%v.json", a.Default, urlPath)) {
-		filePath = fmt.Sprintf("%v/%v.json", a.Default, urlPath)
+	seed = strings.Replace(seed, "__", "#", -1)
+	seed = strings.Replace(seed, "/", "_", -1)
+	seed = strings.Replace(seed, "#", "_", -1)
+
+	filePath := fmt.Sprintf("%v/%v.json", a.Folder, seed)
+	if isNotExist(filePath) && !isNotExist(fmt.Sprintf("%v/%v.json", a.Default, seed)) {
+		filePath = fmt.Sprintf("%v/%v.json", a.Default, seed)
 	}
 
 	return filePath, nil
@@ -63,7 +67,7 @@ func (a *ApiFake) GetSeedPath() (string, error) {
 // if the folder exists with same name of 'X-Fake-Domain'
 // it will use this folder as base
 func (a *ApiFake) registerDomain() {
-	if domain, has := a.fetchHeaderData("X-Fake-Domain"); has {
+	if domain, has := a.getHeaderData("X-Fake-Domain"); has {
 		a.Domain = domain
 	}
 
@@ -77,7 +81,7 @@ func (a *ApiFake) registerDomain() {
 
 // RegisterDelay if has header for dela register at fakeApi
 func (a *ApiFake) registerDelay() {
-	delay, has := a.fetchHeaderData("X-Fake-Delay")
+	delay, has := a.getHeaderData("X-Fake-Delay")
 	if !has {
 		return
 	}
@@ -91,8 +95,8 @@ func (a *ApiFake) registerDelay() {
 	a.Delay = int(i)
 }
 
-// fetchHeaderData returns first data from header
-func (a *ApiFake) fetchHeaderData(name string) (string, bool) {
+// getHeaderData returns first data from header
+func (a *ApiFake) getHeaderData(name string) (string, bool) {
 	values, has := a.Context.Req.Header[name]
 	if has && len(values) > 0 {
 
@@ -106,6 +110,7 @@ func (a *ApiFake) fetchHeaderData(name string) (string, bool) {
 	return "", false
 }
 
+// isNotExists return if file exists or not
 func isNotExist(path string) bool {
 	_, err := os.Stat(path)
 	return os.IsNotExist(err)

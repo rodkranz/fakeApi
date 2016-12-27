@@ -1,7 +1,7 @@
 // Copyright 2016 Kranz. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package api
+package common
 
 import (
 	"fmt"
@@ -9,10 +9,8 @@ import (
 	"net/http"
 	"io/ioutil"
 
-	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/tools"
 	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/files"
 )
 
@@ -66,21 +64,4 @@ type Endpoint struct {
 	StatusCode int
 	StatusText string
 	Data       interface{}
-}
-
-func ApiDocs(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
-	docs := &Docs{
-		Domain: fakeApi.Domain,
-		Path:   fakeApi.Folder,
-	}
-	docs.LoadSeeds()
-
-	status := http.StatusOK
-
-	ctx.JSON(status, map[string]interface{}{
-		"message":  "List of endpoints available for this domain",
-		"status":   status,
-		"domain":   fakeApi.Domain,
-		"resource": docs,
-	})
 }

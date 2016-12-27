@@ -1,0 +1,20 @@
+{
+	"GET_200": {
+	  	"data": {
+	    	"success": true,
+	    	"message": "User password recovery email was sent with success"
+	  	}
+	},
+	"GET_400": {
+	    "data": {
+	        "success": false,
+	        "message": "There is no account with given email"
+	    },
+	    "error": {
+	        "id": "User Entity Exception",
+	        "title": "There is no account with given email"
+	    }
+	}
+
+
+}

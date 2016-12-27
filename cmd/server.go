@@ -10,11 +10,13 @@ import (
 	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
 
-	routeApi "github.com/rodkranz/fakeApi/router/api"
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/router/web"
+
+	routeApi "github.com/rodkranz/fakeApi/router/api"
+	routeWeb "github.com/rodkranz/fakeApi/router/web"
+	"path"
 )
 
 var Server = &cli.Command{
@@ -37,19 +39,26 @@ func newMacaron() *macaron.Macaron {
 		BaseFolder: settings.Folder,
 	}))
 
+	// Static folder
+	m.Use(macaron.Static(path.Join("public")))
+
 	m.Use(context.Contexter())
 	return m
 }
 
 func runServer(ctx *cli.Context) error {
 	m := newMacaron()
-	m.Get("/", web.Home)
 
+	// Web
+	m.Get("/", routeWeb.Home)
+	m.Get("/docs", routeWeb.Docs)
+
+	// Api
 	m.Group("/api", func() {
 		// Any Request with options will return 200.
 		m.Options("*", routeApi.HandleOptions)
 
-		m.Get("", web.Docs)
+		m.Get("", routeApi.ApiDocs)
 
 		// Fake Api Dynamic Routers
 		m.Group("/", func() {

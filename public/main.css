@@ -1,0 +1,23 @@
+body {
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 20px;
+}
+
+.container {
+    margin-top: 10%;
+    padding-left: 20%;
+    padding-right: 20%;
+    text-align: center
+}
+
+.container.small {
+    margin-top: 0;
+}
+
+.page-header small {
+    color: #696666;
+}
+
+.page-header {
+    border-bottom: #ccc 1px solid;
+}
