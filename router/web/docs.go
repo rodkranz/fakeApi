@@ -16,7 +16,7 @@ const (
 	DOCS_TEMPLATE base.TplName = "docs"
 )
 
-func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake)  {
+func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake) {
 	docs := &common.Docs{
 		Domain: fakeApi.Domain,
 		Path:   fakeApi.Folder,
@@ -24,7 +24,7 @@ func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake)  {
 	docs.LoadSeeds()
 
 	ctx.Data["Title"] = fakeApi.Domain + " Welcome [Doc FakeApi]"
-	ctx.Data["Docs"]  = docs
 
+	ctx.Data["Doc"] = docs
 	ctx.HTML(http.StatusOK, DOCS_TEMPLATE)
 }
