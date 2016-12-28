@@ -226,25 +226,65 @@ curl ... 0.01s user 0.01s system 0% cpu 3.020 total
  You can see which links is available at FakeApi `seed` accessing the link `http://localhost:9090/api`
  this link will show list of endpoints available.
 
- Next step will generate docs automatic.
 
+#### Json documentation
+
+The docs will be generate automatic 
 ```
 {
-  "domain": "default",
-  "message": "List of endpoints available for this domain",
-  "resource": [
-    "/api/account/change/password/3bf0f2397de50c326346aeb3475d834d1e05e9f",
-    "/api/account/confirmation/d019ccfd071164ae7ac8ca8a934a90e8b612",
-    "/api/account/forgot/rodrigo.lopes@olx.com",
-    "/api/account/signup",
-    "/api/account/token/verify/3bf0f2397de50c326346aeb3475d834d1e05e9f",
-    "/api/account/validate",
-    "/api/test",
-    "/api/user/profile/3bf0f2397de50c326346aeb3475d834d1e05e9f"
-  ],
-  "status": 200
+    "domain": "default",
+    "message": "List of endpoints available for this domain",
+    "resource": {
+        "Domain": "default",
+        "Path": "fakes/default",
+        "Docs": [
+            {
+                "Path": "fakes/default/api_account_confirmation_d019ccfd071164ae7ac8ca8a934a90e8b612.json",
+                "Url": "/api/account/confirmation/d019ccfd071164ae7ac8ca8a934a90e8b612",
+                "Error": "Something is worng with file api_account_confirmation_d019ccfd071164ae7ac8ca8a934a90e8b612.json error invalid character ':' after object key:value pair",
+                "Endpoints": null
+            },
+            {
+                "Path": "fakes/default/api_account_forgot_rodrigo.lopes@olx.com.json",
+                "Url": "/api/account/forgot/rodrigo.lopes@olx.com",
+                "Error": null,
+                "Endpoints": [
+                    {
+                        "Method": "GET",
+                        "StatusCode": 200,
+                        "StatusText": "OK",
+                        "Data": {
+                            "data": {
+                                "message": "User password recovery email was sent with success",
+                                "success": true
+                            }
+                        }
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    }
 }
 ```
+
+#### Web documentation
+
+You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs) 
+this page will be generate in realtime as endpoints.
+
+This is an example of page:
+
+![Docs Home Page](./docs/docs_1.png)
+
+When click at title the collapse will open then you can see the response.
+
+![Docs Collapse open](./docs/docs_2.png)
+
+If the json has error the docs will render like this
+
+![Docs with error](./docs/docs_3.png)
 
 ---
 OBS: By default the cross domain is always enabled.
