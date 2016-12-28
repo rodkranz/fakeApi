@@ -6,6 +6,7 @@ package cmd
 import (
 	"log"
 	"net/http"
+	"path"
 
 	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
@@ -13,10 +14,11 @@ import (
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/module/template"
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	routeWeb "github.com/rodkranz/fakeApi/router/web"
-	"path"
+
 )
 
 var Server = &cli.Command{
@@ -31,6 +33,9 @@ func newMacaron() *macaron.Macaron {
 	m := macaron.New()
 
 	m.Use(macaron.Renderer(macaron.RenderOptions{
+		Directory:         path.Join("templates"),
+		AppendDirectories: []string{path.Join("templates")},
+		Funcs:             template.NewFuncMap(),
 		IndentJSON:        macaron.Env != macaron.PROD,
 	}))
 

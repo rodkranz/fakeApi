@@ -10,19 +10,30 @@
         </h1>
     </div>
 
-    <dl class="dl-horizontal">
-        <dt>Domain</dt>
-        <dd>{{.Doc.Domain}}</dd>
-    </dl>
+    <div class="alert alert-info" role="alert">
+        Domain: <strong>{{.Doc.Domain}}</strong>
+    </div>
 
     {{range $elm := .Doc.Docs}}
-    <div class="panel panel-default">
-        <div class="panel-heading"><b>Url:</b> /api/account/login</div>
+    <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}">
+        <div class="panel-heading">
+            Url: <strong>/api/account/login</strong>
+
+            {{if not $elm.Error }}
+                <button type="button"
+                        class="btn btn-default btn-xs pull-right"
+                        aria-label="Left Align"
+                        onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
+                >
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                </button>
+            {{end}}
+        </div>
         <div class="panel-body">
             <dl>
-                <dt>Path</dt>
+                <dt>Path:</dt>
                 <dd>{{$elm.Path}}</dd>
-                <dt>Url</dt>
+                <dt>Url:</dt>
                 <dd>{{$elm.Url}}</dd>
             </dl>
 
@@ -32,19 +43,28 @@
             </div>
             {{end}}
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel-group" id="{{$elm.Url | Marshal | SHA1}}" role="tablist" aria-multiselectable="true">
                 {{range $end := $elm.Endpoints}}
                 <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="headingOne">
+                    <div class="panel-heading" role="tab" id="heading-{{$end.Data | Marshal | SHA1}}">
                         <h4 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <a class="collapsed"
+                               role="button"
+                               data-toggle="collapse"
+                               data-parent="#{{$elm.Url | Marshal | SHA1}}"
+                               href="#collapse-{{$end.Data | Marshal | SHA1}}"
+                               aria-expanded="false"
+                               aria-controls="collapse-{{$end.Data | Marshal | SHA1}}"
+                            >
                                 {{$end.Method}} {{$end.StatusCode}}
                             </a>
                         </h4>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+
+                    <div id="collapse-{{$end.Data | Marshal | SHA1}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
+                         aria-labelledby="heading-{{$end.Data | Marshal | SHA1}}">
                         <div class="panel-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            <pre data-type="javascript">{{$end.Data | Marshal}}</pre>
                         </div>
                     </div>
                 </div>
@@ -54,11 +74,49 @@
     </div>
     {{end}}
 </div>
+<style>
+    pre {
+        outline: #ccc solid 1px;
+        padding: 5px;
+        margin: 5px
+    }
+    .string {  color: green; }
+    .number {  color: #ff8c00; }
+    .boolean { color: #00f; }
+    .null {    color: #ff00ff; }
+    .key {     color: red; }
+</style>
 <script>
 (function (w) {
+    function syntaxHighlight(json) {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
     w.onload = function () {
-        $('.collapse').collapse()
-    };
-})(window);
+        function injectHighlight(elm) {
+            elm.innerHTML = syntaxHighlight(elm.innerHTML);
+        }
+
+        document
+            .querySelectorAll('[data-type=javascript]')
+            .forEach(injectHighlight)
+    }
+})(window)
 </script>
+
 {{template "base/footer" .}}

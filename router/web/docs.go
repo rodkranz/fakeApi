@@ -24,7 +24,7 @@ func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake) {
 	docs.LoadSeeds()
 
 	ctx.Data["Title"] = fakeApi.Domain + " Welcome [Doc FakeApi]"
-
 	ctx.Data["Doc"] = docs
+
 	ctx.HTML(http.StatusOK, DOCS_TEMPLATE)
 }
