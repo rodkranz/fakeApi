@@ -13,7 +13,7 @@
     {{range $elm := .Doc.Docs}}
     <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}">
         <div class="panel-heading">
-            Url: <strong>/api/account/login</strong>
+            Url: <strong>{{$elm.Url}}</strong>
 
             {{if not $elm.Error }}
                 <button type="button"
@@ -29,8 +29,6 @@
             <dl>
                 <dt>Path:</dt>
                 <dd>{{$elm.Path}}</dd>
-                <dt>Url:</dt>
-                <dd>{{$elm.Url}}</dd>
             </dl>
 
             {{if $elm.Error }}
