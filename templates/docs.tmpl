@@ -1,8 +1,6 @@
 {{template "base/header" .}}
-
-
 <div class="container">
-    <div class="page-header text-center">
+    <div class="page-header text-center" style="margin-top: 10px">
         <h1>
             Docs
             &nbsp;
@@ -76,13 +74,18 @@
 </div>
 <style>
     pre {
-        outline: #ccc solid 1px;
         padding: 5px;
-        margin: 5px
+        margin: 5px;
+        background: #000;
+        color: #ccc;
+        font: 12px/1.2 Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+        -webkit-transition: height .4s;
+        transition: height .4s;
+
     }
     .string {  color: green; }
     .number {  color: #ff8c00; }
-    .boolean { color: #00f; }
+    .boolean { color: #0b58ff; }
     .null {    color: #ff00ff; }
     .key {     color: red; }
 </style>
