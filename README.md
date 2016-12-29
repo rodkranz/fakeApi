@@ -223,7 +223,7 @@ curl ... 0.01s user 0.01s system 0% cpu 3.020 total
 
 ## List of links available ##
 
- You can see which links is available at FakeApi `seed` accessing the link `http://localhost:9090/api`
+ You can see which links are available at FakeApi `seed` files, access the link `http://localhost:9090/api`
  this link will show list of endpoints available.
 
 
@@ -271,8 +271,8 @@ The docs will be generate automatic
 
 #### Web documentation
 
-You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs) 
-this page will be generate in realtime as endpoints.
+You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs).
+this page will be generate in realtime the documents that you have in `JSONS` file.
 
 This is an example of page:
 
@@ -288,17 +288,16 @@ If the json has error the docs will render like this
 
 ### Seed file for documentation
 
-You can write some notes to show in docs page, you can set `title` and `description` at node `DOC`.
-if has this info the docs will generate comments.
+If you want to show more descriptions about your endpoint it is possible if you create a node `DOC` at you `Seed` files
+this node needs to have set `title` and `description`, you can see the example above.
 
  * **DOC**:
 
     * title: Title with little text about endpoint.
     * description: Text more descriptive about what your endpoint does.
-
  * **INPUT** :
 
-    Example that client/frontend needs to send to backend. what endpoints is expecting receive.
+    * The text saying what your endpoints are expecting to receive from client/frontend.
 
 
 *P.S*: Seed file with comments:
@@ -322,7 +321,7 @@ if has this info the docs will generate comments.
 }
 ```
 
-The web page will render this seed like it:
+The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
 
