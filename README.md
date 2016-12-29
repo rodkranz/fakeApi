@@ -269,7 +269,7 @@ The docs will be generate automatic
 }
 ```
 
-#### Web documentation
+## Web documentation ##
 
 You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs).
 this page will be generate in realtime the documents that you have in `JSONS` file.
@@ -286,7 +286,7 @@ If the json has error the docs will render like this
 
 ![Docs with error](./docs/docs_03.png)
 
-### Seed file for documentation
+## Seed file for documentation ##
 
 If you want to show more descriptions about your endpoint it is possible if you create a node `DOC` at you `Seed` files
 this node needs to have set `title` and `description`, you can see the example above.
