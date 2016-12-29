@@ -1,0 +1,132 @@
+{{template "base/header" .}}
+<div class="container">
+    <div class="page-header slogan text-center" style="margin-top: 10px">
+        <h1>
+            Docs&nbsp;<small>fake api</small>
+        </h1>
+    </div>
+
+    <div class="alert alert-info" role="alert">
+        Domain: <strong>{{.Doc.Domain}}</strong>
+    </div>
+
+    {{range $elm := .Doc.Docs}}
+    <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}" id="table-{{$elm.Url | Marshal | SHA1}}">
+        <div class="panel-heading">
+            <a href="#table-{{$elm.Url | Marshal | SHA1}}">
+                Url: <strong>{{$elm.Url}}</strong>
+            </a>
+
+            {{if not $elm.Error }}
+                <button type="button"
+                        class="btn btn-default btn-xs pull-right"
+                        aria-label="Left Align"
+                        onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
+                >
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                </button>
+            {{end}}
+        </div>
+        <div class="panel-body">
+            <div>
+                <h4>{{$elm.Title}}</h4>
+                <p>{{$elm.Desc}}</p>
+            </div>
+            <dl>
+                <dt>Path:</dt>
+                <dd>{{$elm.Path}}</dd>
+            </dl>
+
+            {{if $elm.Error }}
+            <div class="alert alert-warning" role="alert">
+                <strong>Warning!</strong> {{$elm.Error}}
+            </div>
+            {{end}}
+
+            <div class="panel-group" id="{{$elm.Url | Marshal | SHA1}}" role="tablist" aria-multiselectable="true">
+                {{range $end := $elm.Endpoints}}
+                
+                {{$idHeading  := RandStringPrefix "heading" 32 }}
+                {{$idCollapse := RandStringPrefix "collapse" 32 }}
+
+                <div class="panel {{if not (eq $end.StatusCode 0)}}panel-default{{else}}panel-info{{end}}">
+                    <div class="panel-heading" role="tab" id="{{$idHeading}}">
+                        <h4 class="panel-title">
+                            <a class="collapsed"
+                               role="button"
+                               data-toggle="collapse"
+                               data-parent="#{{$elm.Url | Marshal | SHA1}}"
+                               href="#{{$idCollapse}}"
+                               aria-expanded="false"
+                               aria-controls="{{$idCollapse}}"
+                            >
+                                {{$end.Method}}
+                                {{if not (eq $end.StatusCode 0)}}{{$end.StatusCode}}{{end}}
+                            </a>
+                        </h4>
+                    </div>
+
+                    <div id="{{$idCollapse}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
+                         aria-labelledby="{{$idHeading}}">
+                        <div class="panel-body">
+                            <pre data-type="javascript">{{$end.Data | Marshal}}</pre>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+    {{end}}
+</div>
+<style>
+    pre {
+        padding: 5px;
+        margin: 5px;
+        background: #000;
+        color: #ccc;
+        font: 12px/1.2 Menlo,Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;
+        -webkit-transition: height .4s;
+        transition: height .4s;
+
+    }
+    .string {  color: green; }
+    .number {  color: #ff8c00; }
+    .boolean { color: #0b58ff; }
+    .null {    color: #ff00ff; }
+    .key {     color: red; }
+</style>
+<script>
+(function (w) {
+    function syntaxHighlight(json) {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'key';
+                } else {
+                    cls = 'string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'boolean';
+            } else if (/null/.test(match)) {
+                cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+
+    w.onload = function () {
+        function injectHighlight(elm) {
+            elm.innerHTML = syntaxHighlight(elm.innerHTML);
+        }
+
+        document
+            .querySelectorAll('[data-type=javascript]')
+            .forEach(injectHighlight)
+    }
+})(window)
+</script>
+
+{{template "base/footer" .}}

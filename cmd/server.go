@@ -6,15 +6,18 @@ package cmd
 import (
 	"log"
 	"net/http"
+	"path"
 
-	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
+	"gopkg.in/urfave/cli.v2"
 
-	routeApi "github.com/rodkranz/fakeApi/router/api"
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/router/web"
+	"github.com/rodkranz/fakeApi/module/template"
+
+	routeApi "github.com/rodkranz/fakeApi/router/api"
+	routeWeb "github.com/rodkranz/fakeApi/router/web"
 )
 
 var Server = &cli.Command{
@@ -29,6 +32,9 @@ func newMacaron() *macaron.Macaron {
 	m := macaron.New()
 
 	m.Use(macaron.Renderer(macaron.RenderOptions{
+		Directory:         path.Join("templates"),
+		AppendDirectories: []string{path.Join("templates")},
+		Funcs:             template.NewFuncMap(),
 		IndentJSON:        macaron.Env != macaron.PROD,
 	}))
 
@@ -37,26 +43,32 @@ func newMacaron() *macaron.Macaron {
 		BaseFolder: settings.Folder,
 	}))
 
+	// Static folder
+	m.Use(macaron.Static(path.Join("public")))
+
 	m.Use(context.Contexter())
 	return m
 }
 
 func runServer(ctx *cli.Context) error {
 	m := newMacaron()
-	m.Get("/", web.Home)
 
+	// Web
+	m.Get("/", routeWeb.Home)
+	m.Get("/docs", routeWeb.Docs)
+
+	// Api
 	m.Group("/api", func() {
 		// Any Request with options will return 200.
 		m.Options("*", routeApi.HandleOptions)
 
-		m.Get("", web.Docs)
+		m.Get("", routeApi.ApiDocs)
 
 		// Fake Api Dynamic Routers
 		m.Group("/", func() {
 			m.Any("*", routeApi.FakeApi)
 		}, context.APIContexter())
 	}, context.APIContexter())
-
 
 	log.Println("Server is running...")
 	log.Println("Access from http://0.0.0.0:9090/")

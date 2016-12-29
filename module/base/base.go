@@ -3,4 +3,6 @@
 // license that can be found in the LICENSE file.
 package base
 
-type (TplName string)
+type (
+	TplName string
+)

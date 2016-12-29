@@ -4,9 +4,11 @@
 package files
 
 import (
-	"io/ioutil"
 	"errors"
+	"fmt"
 	"github.com/rodkranz/fakeApi/module/entity"
+	"io/ioutil"
+	"path"
 )
 
 func Load(p string, i entity.Endpoint) error {
@@ -16,7 +18,7 @@ func Load(p string, i entity.Endpoint) error {
 	}
 
 	if err = i.Unmarshal(data); err != nil {
-		return errors.New("Something is worng with settings:" + err.Error())
+		return errors.New(fmt.Sprintf("Something is worng with file %s error %s", path.Base(p), err.Error()))
 	}
 
 	return nil
