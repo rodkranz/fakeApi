@@ -1,12 +1,12 @@
 // Copyright 2016 Kranz. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package tools
+package base
 
 import (
+	"path"
 	"strconv"
 	"strings"
-	"path"
 )
 
 func PathToUrl(p string) string {
@@ -26,7 +26,6 @@ func UrLToPath(p string) string {
 
 	return p
 }
-
 
 func SplitMethodAndStatus(s string) (method string, code int) {
 	if !strings.Contains(s, "_") {

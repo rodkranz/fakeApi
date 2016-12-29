@@ -4,9 +4,9 @@
 package context
 
 import (
-	"log"
-	"gopkg.in/macaron.v1"
 	"github.com/rodkranz/fakeApi/module/settings"
+	"gopkg.in/macaron.v1"
+	"log"
 	"runtime"
 )
 
@@ -49,7 +49,7 @@ func APIContexter() macaron.Handler {
 		}
 
 		ctx.Resp.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		ctx.Resp.Header().Set("Server", "GoLang " + runtime.Version())
+		ctx.Resp.Header().Set("Server", "GoLang "+runtime.Version())
 		ctx.Resp.Header().Set("Developer", "Rodrigo Lopes")
 
 		if settings.CrossDomain {

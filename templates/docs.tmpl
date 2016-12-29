@@ -11,9 +11,11 @@
     </div>
 
     {{range $elm := .Doc.Docs}}
-    <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}">
+    <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}" id="table-{{$elm.Url | Marshal | SHA1}}">
         <div class="panel-heading">
-            Url: <strong>{{$elm.Url}}</strong>
+            <a href="#table-{{$elm.Url | Marshal | SHA1}}">
+                Url: <strong>{{$elm.Url}}</strong>
+            </a>
 
             {{if not $elm.Error }}
                 <button type="button"
@@ -26,6 +28,10 @@
             {{end}}
         </div>
         <div class="panel-body">
+            <div>
+                <h4>{{$elm.Title}}</h4>
+                <p>{{$elm.Desc}}</p>
+            </div>
             <dl>
                 <dt>Path:</dt>
                 <dd>{{$elm.Path}}</dd>
@@ -39,24 +45,29 @@
 
             <div class="panel-group" id="{{$elm.Url | Marshal | SHA1}}" role="tablist" aria-multiselectable="true">
                 {{range $end := $elm.Endpoints}}
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="heading-{{$end.Data | Marshal | SHA1}}">
+                
+                {{$idHeading  := RandStringPrefix "heading" 32 }}
+                {{$idCollapse := RandStringPrefix "collapse" 32 }}
+
+                <div class="panel {{if not (eq $end.StatusCode 0)}}panel-default{{else}}panel-info{{end}}">
+                    <div class="panel-heading" role="tab" id="{{$idHeading}}">
                         <h4 class="panel-title">
                             <a class="collapsed"
                                role="button"
                                data-toggle="collapse"
                                data-parent="#{{$elm.Url | Marshal | SHA1}}"
-                               href="#collapse-{{$end.Data | Marshal | SHA1}}"
+                               href="#{{$idCollapse}}"
                                aria-expanded="false"
-                               aria-controls="collapse-{{$end.Data | Marshal | SHA1}}"
+                               aria-controls="{{$idCollapse}}"
                             >
-                                {{$end.Method}} {{$end.StatusCode}}
+                                {{$end.Method}}
+                                {{if not (eq $end.StatusCode 0)}}{{$end.StatusCode}}{{end}}
                             </a>
                         </h4>
                     </div>
 
-                    <div id="collapse-{{$end.Data | Marshal | SHA1}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
-                         aria-labelledby="heading-{{$end.Data | Marshal | SHA1}}">
+                    <div id="{{$idCollapse}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
+                         aria-labelledby="{{$idHeading}}">
                         <div class="panel-body">
                             <pre data-type="javascript">{{$end.Data | Marshal}}</pre>
                         </div>

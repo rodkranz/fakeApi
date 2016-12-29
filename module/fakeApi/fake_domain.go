@@ -4,13 +4,13 @@
 package fakeApi
 
 import (
-	"os"
 	"fmt"
-	"time"
+	"log"
+	"os"
+	"path"
 	"strconv"
 	"strings"
-	"log"
-	"path"
+	"time"
 
 	"gopkg.in/macaron.v1"
 )

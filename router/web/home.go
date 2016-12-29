@@ -6,8 +6,8 @@ package web
 import (
 	"net/http"
 
-	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 )
 
@@ -16,7 +16,7 @@ const (
 )
 
 func Home(ctx *context.Context, fakeApi *fakeApi.ApiFake) {
-	ctx.Data["Title"] = fakeApi.Domain + " [FakeApi]"
+	ctx.Data["Title"] = "[FakeApi] " + fakeApi.Domain
 
 	ctx.HTML(http.StatusOK, HOME_TEMPLATE)
 }

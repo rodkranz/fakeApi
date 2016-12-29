@@ -276,15 +276,55 @@ this page will be generate in realtime as endpoints.
 
 This is an example of page:
 
-![Docs Home Page](./docs/docs_1.png)
+![Docs Home Page](./docs/docs_01.png)
 
 When click at title the collapse will open then you can see the response.
 
-![Docs Collapse open](./docs/docs_2.png)
+![Docs Collapse open](./docs/docs_02.png)
 
 If the json has error the docs will render like this
 
-![Docs with error](./docs/docs_3.png)
+![Docs with error](./docs/docs_03.png)
+
+### Seed file for documentation
+
+You can write some notes to show in docs page, you can set `title` and `description` at node `DOC`.
+if has this info the docs will generate comments.
+
+ * **DOC**:
+
+    * title: Title with little text about endpoint.
+    * description: Text more descriptive about what your endpoint does.
+
+ * **INPUT** :
+
+    Example that client/frontend needs to send to backend. what endpoints is expecting receive.
+
+
+*P.S*: Seed file with comments:
+
+```
+{
+    "DOC": {
+        "title": "Validate account",
+        "description": "This endpoint will validate the account changing flag 'pending' to 'activate'."
+    },
+    "INPUT": {
+        "email": "rodrigo.lopes@olx.com",
+        "token": "d019ccfd071164ae7ac8ca8a934a90e8b612"
+    },
+    "POST_201": {
+        "data": {
+            "success": true,
+            "message": "OK"
+        }
+    }
+}
+```
+
+The web page will render this seed like it:
+
+![Docs with texts](./docs/docs_04.png)
 
 ---
-OBS: By default the cross domain is always enabled.
+*P.S*: By default the cross domain is always enabled.

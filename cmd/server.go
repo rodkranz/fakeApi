@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"path"
 
-	"gopkg.in/urfave/cli.v2"
 	"gopkg.in/macaron.v1"
+	"gopkg.in/urfave/cli.v2"
 
 	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
@@ -18,7 +18,6 @@ import (
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	routeWeb "github.com/rodkranz/fakeApi/router/web"
-
 )
 
 var Server = &cli.Command{
@@ -70,7 +69,6 @@ func runServer(ctx *cli.Context) error {
 			m.Any("*", routeApi.FakeApi)
 		}, context.APIContexter())
 	}, context.APIContexter())
-
 
 	log.Println("Server is running...")
 	log.Println("Access from http://0.0.0.0:9090/")

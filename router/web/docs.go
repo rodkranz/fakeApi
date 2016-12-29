@@ -6,8 +6,8 @@ package web
 import (
 	"net/http"
 
-	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/module/context"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/router/common"
 )
@@ -23,7 +23,7 @@ func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake) {
 	}
 	docs.LoadSeeds()
 
-	ctx.Data["Title"] = fakeApi.Domain + " Welcome [Doc FakeApi]"
+	ctx.Data["Title"] = "[Docs FakeApi] " + fakeApi.Domain
 	ctx.Data["Doc"] = docs
 
 	ctx.HTML(http.StatusOK, DOCS_TEMPLATE)

@@ -6,8 +6,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/module/context"
+	"github.com/rodkranz/fakeApi/module/fakeApi"
 	"github.com/rodkranz/fakeApi/router/common"
 )
 
@@ -27,4 +27,3 @@ func ApiDocs(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		"resource": docs,
 	})
 }
-

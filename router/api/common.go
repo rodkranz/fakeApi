@@ -5,15 +5,15 @@ package api
 
 import (
 	"fmt"
-	"path"
 	"net/http"
+	"path"
 
 	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/tools"
-	"github.com/rodkranz/fakeApi/module/files"
 	"github.com/rodkranz/fakeApi/module/entity"
 	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/module/files"
 
+	"github.com/rodkranz/fakeApi/module/base"
 )
 
 // isFileExists get url and check if file exists in seed folder
@@ -64,8 +64,8 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 
 	method, status, has := fake.GetMethodAndStatusCode()
 	if !has {
-		method_status, _ := tools.RandMapString(endpoint, method)
-		method, status = tools.SplitMethodAndStatus(method_status)
+		method_status, _ := base.RandMapString(endpoint, method)
+		method, status = base.SplitMethodAndStatus(method_status)
 	}
 
 	// set in context to share with application
@@ -84,10 +84,10 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		http.StatusNotFound,
 		"Method in seed file not found.",
 		map[string]interface{}{
-			"status_code":  status,
-			"method":       method,
-			"domain":       fake.Domain,
-			"file_name":    path.Base(ctx.Data["seed_file"].(string)),
+			"status_code": status,
+			"method":      method,
+			"domain":      fake.Domain,
+			"file_name":   path.Base(ctx.Data["seed_file"].(string)),
 		})
 
 	return nil

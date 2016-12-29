@@ -4,13 +4,15 @@
 package template
 
 import (
-	"html/template"
 	"github.com/rodkranz/fakeApi/module/base"
+	"html/template"
 )
 
 func NewFuncMap() []template.FuncMap {
 	return []template.FuncMap{map[string]interface{}{
-		"SHA1":            base.EncodeSha1,
-		"Marshal":         base.Marshal,
+		"SHA1":             base.EncodeSha1,
+		"Marshal":          base.Marshal,
+		"RandString":       base.RandString,
+		"RandStringPrefix": base.RandStringPrefix,
 	}}
 }

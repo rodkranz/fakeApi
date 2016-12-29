@@ -1,12 +1,13 @@
 // Copyright 2016 Kranz. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-package tools
+package base
 
 import (
-	"time"
 	"math/rand"
 	"strings"
+	"time"
+	"fmt"
 )
 
 func init() {
@@ -17,12 +18,24 @@ func RandInt(min int, max int) int {
 	return min + rand.Intn(max - min)
 }
 
+func RandStringPrefix(prefix string, l int) string {
+	return fmt.Sprintf("%s-%s", prefix, RandString(l))
+}
+
 func RandString(l int) string {
-	bytes := make([]byte, l)
-	for i := 0; i < l; i++ {
-		bytes[i] = byte(RandInt(65, 90))
+	bytes := []byte{}
+	for len(bytes) < l {
+		if RandInt(0, 1)%2 == 0 {
+			bytes = append(bytes, byte(RandInt(65, 90)))
+		}
+		if RandInt(0, 1)%2 == 0 {
+			bytes = append(bytes, byte(RandInt(97, 122)))
+		}
+		if RandInt(0, 1)%2 == 0 {
+			bytes = append(bytes, byte(RandInt(48, 57)))
+		}
 	}
-	return string(bytes)
+	return string(bytes[:l])
 }
 
 func RandSliceString(list []string) string {

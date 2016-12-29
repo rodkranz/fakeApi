@@ -4,10 +4,10 @@
 package files
 
 import (
-	"io/ioutil"
 	"errors"
-	"github.com/rodkranz/fakeApi/module/entity"
 	"fmt"
+	"github.com/rodkranz/fakeApi/module/entity"
+	"io/ioutil"
 	"path"
 )
 

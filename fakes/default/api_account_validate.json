@@ -1,4 +1,12 @@
 {
+    "DOC": {
+        "title": "Validate account",
+        "description": "This endpoint will validate the account changing flag 'pending' to 'activate'."
+    },
+    "INPUT": {
+        "email": "rodrigo.lopes@olx.com",
+        "token": "d019ccfd071164ae7ac8ca8a934a90e8b612"
+    },
     "POST_201": {
         "data": {
             "success": true,
