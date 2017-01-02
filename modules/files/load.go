@@ -6,7 +6,7 @@ package files
 import (
 	"errors"
 	"fmt"
-	"github.com/rodkranz/fakeApi/module/entity"
+	"github.com/rodkranz/fakeApi/modules/entity"
 	"io/ioutil"
 	"path"
 )

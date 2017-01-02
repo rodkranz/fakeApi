@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/entity"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
-	"github.com/rodkranz/fakeApi/module/files"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/entity"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/files"
 
-	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/modules/base"
 )
 
 // isFileExists get url and check if file exists in seed folder

@@ -10,14 +10,14 @@ import (
 	"gopkg.in/urfave/cli.v2"
 
 	"github.com/rodkranz/fakeApi/cmd"
-	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/modules/setting"
 )
 
-const VER = "1.1.0"
+const VER = "1.2.0"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	settings.APP_VER = VER
+	setting.AppVer = VER
 }
 
 func main() {

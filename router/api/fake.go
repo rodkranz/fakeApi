@@ -4,8 +4,8 @@
 package api
 
 import (
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
 )
 
 func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {

@@ -4,20 +4,25 @@
 package cmd
 
 import (
-	"log"
+	"crypto/tls"
+	"fmt"
 	"net/http"
 	"path"
+	"strings"
 
 	"gopkg.in/macaron.v1"
 	"gopkg.in/urfave/cli.v2"
 
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
-	"github.com/rodkranz/fakeApi/module/settings"
-	"github.com/rodkranz/fakeApi/module/template"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/log"
+	"github.com/rodkranz/fakeApi/modules/setting"
+	"github.com/rodkranz/fakeApi/modules/template"
+	"github.com/rodkranz/fakeApi/router"
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	routeWeb "github.com/rodkranz/fakeApi/router/web"
+	"github.com/rodkranz/fakeApi/modules/versions"
 )
 
 var Server = &cli.Command{
@@ -40,7 +45,7 @@ func newMacaron() *macaron.Macaron {
 
 	m.Use(fakeApi.Register(fakeApi.ApiFakeOptions{
 		DefaultApi: "default",
-		BaseFolder: settings.Folder,
+		BaseFolder: setting.SeedFolder,
 	}))
 
 	// Static folder
@@ -51,11 +56,19 @@ func newMacaron() *macaron.Macaron {
 }
 
 func runServer(ctx *cli.Context) error {
+	if ctx.IsSet("config") {
+		setting.CustomConf = ctx.String("config")
+	}
+
+	versions.CheckTemplateVersion()
+	router.GlobalInit()
+
 	m := newMacaron()
 
 	// Web
 	m.Get("/", routeWeb.Home)
 	m.Get("/docs", routeWeb.Docs)
+	m.Options("*", routeWeb.HandleOptions)
 
 	// Api
 	m.Group("/api", func() {
@@ -70,7 +83,31 @@ func runServer(ctx *cli.Context) error {
 		}, context.APIContexter())
 	}, context.APIContexter())
 
-	log.Println("Server is running...")
-	log.Println("Access from http://0.0.0.0:9090/")
-	return http.ListenAndServe("0.0.0.0:9090", m)
+	// Not found handler.
+	m.NotFound(routeWeb.NotFound)
+
+	// Flag for port number in case first time run conflict.
+	if ctx.IsSet("port") {
+		setting.AppUrl = strings.Replace(setting.AppUrl, setting.HTTPPort, ctx.String("port"), 1)
+		setting.HTTPPort = ctx.String("port")
+	}
+
+	listenAddr := fmt.Sprintf("%s:%s", setting.HTTPAddr, setting.HTTPPort)
+	log.Info("Listen: %v://%s%s", setting.Protocol, listenAddr, setting.AppSubUrl)
+
+	var err error
+	switch setting.Protocol {
+	case setting.HTTP:
+		err = http.ListenAndServe(listenAddr, m)
+	case setting.HTTPS:
+		server := &http.Server{Addr: listenAddr, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS10}, Handler: m}
+		err = server.ListenAndServeTLS(setting.CertFile, setting.KeyFile)
+	default:
+		log.Fatal(4, "Invalid protocol: %s", setting.Protocol)
+	}
+
+	if err != nil {
+		log.Fatal(4, "Fail to start server: %v", err)
+	}
+	return nil
 }

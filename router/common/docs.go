@@ -10,9 +10,9 @@ import (
 	"path"
 	"strings"
 
-	"github.com/rodkranz/fakeApi/module/base"
-	"github.com/rodkranz/fakeApi/module/files"
-	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/modules/base"
+	"github.com/rodkranz/fakeApi/modules/files"
+	"github.com/rodkranz/fakeApi/modules/setting"
 )
 
 type Docs struct {
@@ -24,7 +24,7 @@ type Docs struct {
 func (d *Docs) LoadSeeds() {
 	fs, _ := ioutil.ReadDir(d.Path)
 	for _, f := range fs {
-		if !f.IsDir() && path.Ext(f.Name()) == settings.Ext {
+		if !f.IsDir() && path.Ext(f.Name()) == setting.SeedExtension {
 			doc := &Doc{
 				Path: fmt.Sprintf("%v/%v", d.Path, f.Name()),
 				Url:  fmt.Sprintf("/%v", base.PathToUrl(f.Name())),

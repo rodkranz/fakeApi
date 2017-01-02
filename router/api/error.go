@@ -6,7 +6,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/rodkranz/fakeApi/module/context"
+	"github.com/rodkranz/fakeApi/modules/context"
 )
 
 func HandleOptions(ctx *context.APIContext) {
