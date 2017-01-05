@@ -328,10 +328,10 @@ The web page will be rendered this `seed` above like it:
 
 
 ## Condition Status Code ##
-If you want to set condition for your post, 
-you need to test if post is correct render response `200` or `400` depends on value of request, 
-you can set a additional field `CONDITIONS`
-if body of request match with field `DATA` will render the `ACTION` for that.
+If you want to set a condition for response of your post, 
+you want to test response `200` or `400` depends on value of request, 
+you can set a additional field named `CONDITIONS` for that,
+if body of request match with field `DATA` will render the method that indicated `ACTION`.
 
 ```
 {
