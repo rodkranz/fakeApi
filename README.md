@@ -297,7 +297,8 @@ this node needs to have set `title` and `description`, you can see the example a
     * description: Text more descriptive about what your endpoint does.
  * **INPUT** :
 
-    * The text saying what your endpoints are expecting to receive from client/frontend.
+    * The text saying what your endpoints are expecting to receive from client/frontend, it validate if format of request is equal what was written in seed.
+     
 
 
 *P.S*: Seed file with comments:
@@ -324,6 +325,55 @@ this node needs to have set `title` and `description`, you can see the example a
 The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
+
+
+## Condition Status Code ##
+If you want to set condition for your post, 
+you need to test if post is correct render response `200` or `400` depends on value of request, 
+you can set a additional field `CONDITIONS`
+if body of request match with field `DATA` will render the `ACTION` for that.
+
+```
+{
+    "CONDITIONS": [
+        {
+            "ACTION": "POST_200",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "correct_password"
+            }
+        },
+        {
+            "ACTION": "POST_400",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "wrong_password"
+            }
+        }
+    ],
+    "INPUT": {
+        "username": "rodrigo.lopes@olx.com",
+        "password": "secret_password"
+    },
+    "POST_200": {
+        "message": "Account authentication with success",
+        "access_token": "2bc9ef94406489a5181fbd5898aa2202836810f2",
+        "success": "true"
+    },
+    "POST_400": {
+        "message": "Failed to authenticate user",
+        "success": "false",
+        "error": {
+            "exception": "Exception: invalid_grant",
+            "title": "Invalid username and password combination"
+        }
+    }
+}
+```
+
+## Configuring *FakeApi* with *Nginx*.
+
+> I am writing this step ....
 
 ---
 *P.S*: By default the cross domain is always enabled.

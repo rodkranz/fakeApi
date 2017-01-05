@@ -28,12 +28,23 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
+	checkMethodAndStatus(ctx, fakeApi)
+	if ctx.Written() {
+		return
+	}
+
+	// validate if has condition
+	checkCondition(ctx)
+	if ctx.Written() {
+		return
+	}
+
 	// Find data and retrieve
 	data := getDataByHeaderResponseCode(ctx, fakeApi)
 	if ctx.Written() {
 		return
 	}
 
-	statusCode := ctx.Data["status_code"].(int)
+	statusCode := ctx.Data["statusCode"].(int)
 	ctx.JSON(statusCode, data)
 }
