@@ -10,6 +10,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/go-macaron/gzip"
 	"gopkg.in/macaron.v1"
 	"gopkg.in/urfave/cli.v2"
 
@@ -18,11 +19,12 @@ import (
 	"github.com/rodkranz/fakeApi/modules/log"
 	"github.com/rodkranz/fakeApi/modules/setting"
 	"github.com/rodkranz/fakeApi/modules/template"
+	"github.com/rodkranz/fakeApi/modules/versions"
 	"github.com/rodkranz/fakeApi/router"
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	routeWeb "github.com/rodkranz/fakeApi/router/web"
-	"github.com/rodkranz/fakeApi/modules/versions"
+	"time"
 )
 
 var Server = &cli.Command{
@@ -35,6 +37,14 @@ var Server = &cli.Command{
 
 func newMacaron() *macaron.Macaron {
 	m := macaron.New()
+
+	if !setting.DisableRouterLog {
+		m.Use(macaron.Logger())
+	}
+
+	if setting.EnableGzip {
+		m.Use(gzip.Gziper())
+	}
 
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Directory:         path.Join("templates"),
@@ -59,9 +69,8 @@ func runServer(ctx *cli.Context) error {
 	if ctx.IsSet("config") {
 		setting.CustomConf = ctx.String("config")
 	}
-
-	versions.CheckTemplateVersion()
 	router.GlobalInit()
+	versions.CheckTemplateVersion()
 
 	m := newMacaron()
 
@@ -100,7 +109,14 @@ func runServer(ctx *cli.Context) error {
 	case setting.HTTP:
 		err = http.ListenAndServe(listenAddr, m)
 	case setting.HTTPS:
-		server := &http.Server{Addr: listenAddr, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS10}, Handler: m}
+		server := &http.Server{
+			ReadTimeout:  5 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  120 * time.Second,
+			Addr: listenAddr,
+			TLSConfig: &tls.Config{MinVersion: tls.VersionTLS10},
+			Handler: m,
+		}
 		err = server.ListenAndServeTLS(setting.CertFile, setting.KeyFile)
 	default:
 		log.Fatal(4, "Invalid protocol: %s", setting.Protocol)

@@ -48,10 +48,6 @@ func (a *ApiFake) GetMethodAndStatusCode() (string, int, bool) {
 
 // GetSeedPath returns the path of seed file.
 func (a *ApiFake) GetSeedPath(seed string) (string, error) {
-	if len(seed) == 0 {
-		seed = a.Context.Req.URL.Path[1:]
-	}
-
 	seed = strings.Replace(seed, "__", "#", -1)
 	seed = strings.Replace(seed, "/", "_", -1)
 	seed = strings.Replace(seed, "#", "_", -1)

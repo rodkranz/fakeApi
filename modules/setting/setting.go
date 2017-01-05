@@ -15,6 +15,7 @@ import (
 	"gopkg.in/ini.v1"
 
 	"github.com/rodkranz/fakeApi/modules/log"
+	"path"
 )
 
 type Scheme string
@@ -40,23 +41,21 @@ var (
 	AppDataPath    string
 
 	// Server setting
-	Protocol             Scheme
-	Domain               string
-	HTTPAddr, HTTPPort   string
-	LocalURL             string
-	DisableRouterLog     bool
-	CertFile, KeyFile    string
-	StaticRootPath       string
-	EnableGzip           bool
-	UnixSocketPermission uint32
+	Protocol           Scheme
+	Domain             string
+	HTTPAddr, HTTPPort string
+	LocalURL           string
+	DisableRouterLog   bool
+	CertFile, KeyFile  string
+	StaticRootPath     string
+	EnableGzip         bool
 
 	// Global setting objects
-	Cfg          *ini.File
-	CustomPath   string // Custom directory path
-	CustomConf   string
-	ProdMode     bool
-	IsWindows    bool
-	HasRobotsTxt bool
+	Cfg        *ini.File
+	CustomPath string // Custom directory path
+	CustomConf string
+	ProdMode   bool
+	IsWindows  bool
 
 	// Log setting
 	LogRootPath string
@@ -78,11 +77,11 @@ func execPath() (string, error) {
 
 func init() {
 	IsWindows = runtime.GOOS == "windows"
-	//log.NewLogger(0, "console", `{"level": 0}`)
+	log.NewLogger(0, "console", `{"level": 0}`)
 
 	var err error
 	if AppPath, err = execPath(); err != nil {
-		//		log.Fatal(4, "fail to get app path: %v\n", err)
+		log.Fatal(4, "fail to get app path: %v\n", err)
 	}
 
 	// Note: we don't use path.Dir here because it does not handle case
@@ -92,7 +91,7 @@ func init() {
 
 // WorkDir returns absolute path of work directory.
 func WorkDir() (string, error) {
-	wd := os.Getenv("WWW_DIR")
+	wd := os.Getenv("FAKE_API")
 	if len(wd) > 0 {
 		return wd, nil
 	}
@@ -139,7 +138,18 @@ func NewContext() {
 	}
 	Cfg.NameMapper = ini.AllCapsUnderscore
 
+	homeDir, err := com.HomeDir()
+	if err != nil {
+		log.Fatal(4, "Fail to get home directory: %v", err)
+	}
+	homeDir = strings.Replace(homeDir, "\\", "/", -1)
+
+	LogRootPath = Cfg.Section("log").Key("ROOT_PATH").MustString(path.Join(workDir, "log"))
+	forcePathSeparator(LogRootPath)
+
 	sec := Cfg.Section("app")
+	AppName = sec.Key("APP_NAME").MustString("FakeApi: Api Fake for clients")
+
 	sec = Cfg.Section("server")
 	AppUrl = sec.Key("ROOT_URL").MustString("http://localhost:9090/")
 	if AppUrl[len(AppUrl)-1] != '/' {

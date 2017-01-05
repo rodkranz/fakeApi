@@ -22,6 +22,12 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
+	// validate if post/put/delete has the same format of input
+	checkInputData(ctx)
+	if ctx.Written() {
+		return
+	}
+
 	// Find data and retrieve
 	data := getDataByHeaderResponseCode(ctx, fakeApi)
 	if ctx.Written() {

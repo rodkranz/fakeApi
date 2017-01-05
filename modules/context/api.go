@@ -54,8 +54,8 @@ func APIContexter() macaron.Handler {
 		ctx.Resp.Header().Set("Developer", "Rodrigo Lopes")
 
 		if setting.AllowCrossDomain {
-			//ctx.Resp.Header().Set("Access-Control-Allow-Origin", "*")
-			ctx.Resp.Header().Set("Access-Control-Allow-Origin", ctx.Req.Host)
+			//ctx.Resp.Header().Set("Access-Control-Allow-Origin", ctx.Req.Host)
+			ctx.Resp.Header().Set("Access-Control-Allow-Origin", "*")
 			ctx.Resp.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			ctx.Resp.Header().Set("Access-Control-Max-Age", "1000")
 			ctx.Resp.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Fake-Response-Code, X-Fake-Domain, X-Fake-Delay")

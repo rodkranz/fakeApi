@@ -1,0 +1,39 @@
+{
+    "DOC": {
+        "title": "Login Page",
+        "description": "Use the token to fetch the data from server."
+    },
+    "CONDITIONS": [
+        {
+            "ACTION": "POST_200",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "correct_password"
+            }
+        },
+        {
+            "ACTION": "POST_400",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "wrong_password"
+            }
+        }
+    ],
+    "INPUT": {
+        "username": "rodrigo.lopes@olx.com",
+        "password": "secret_password"
+    },
+    "POST_200": {
+        "message": "Account authentication with success",
+        "access_token": "2bc9ef94406489a5181fbd5898aa2202836810f2",
+        "success": "true"
+    },
+    "POST_400": {
+        "message": "Failed to authenticate user",
+        "success": "false",
+        "error": {
+            "exception": "Exception: invalid_grant",
+            "title": "Invalid username and password combination"
+        }
+    }
+}

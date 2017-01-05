@@ -55,6 +55,10 @@ func (d *Doc) LoadInfo() {
 		ep := &Endpoint{}
 
 		// add info about endpoint (optional)
+		if strings.ToLower(methodAndStatus) == "conditions" {
+			continue
+		}
+
 		if strings.ToLower(methodAndStatus) == "doc" {
 			docInfo := data.(map[string]interface{})
 			if title, has := docInfo["title"]; has {

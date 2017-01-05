@@ -7,19 +7,19 @@ import (
 	"fmt"
 	"net/http"
 	"path"
+	"encoding/json"
 
 	"github.com/rodkranz/fakeApi/modules/context"
 	"github.com/rodkranz/fakeApi/modules/entity"
 	"github.com/rodkranz/fakeApi/modules/fakeApi"
 	"github.com/rodkranz/fakeApi/modules/files"
-
 	"github.com/rodkranz/fakeApi/modules/base"
 )
 
 // isFileExists get url and check if file exists in seed folder
 // if not exist set 404 error.
 func isFileExists(ctx *context.APIContext, fake *fakeApi.ApiFake) string {
-	file, err := fake.GetSeedPath("")
+	file, err := fake.GetSeedPath(ctx.Context.Req.URL.Path[1:])
 
 	if err != nil {
 		ctx.Error(
@@ -91,4 +91,47 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		})
 
 	return nil
+}
+
+func checkInputData(ctx *context.APIContext) {
+	endpoint := ctx.Data["endpoints"].(map[string]interface{})
+	// check if have format for input.
+	entityExpected, has := endpoint["INPUT"]
+	if !has {
+		return
+	}
+
+	body, err := ctx.Req.Body().Bytes()
+	if err != nil {
+		ctx.Error(
+			http.StatusNotFound,
+			err.Error(), nil,
+		)
+		return
+	}
+	defer ctx.Req.Body().ReadCloser()
+
+	entityBody := make(map[string]interface{})
+	if err := json.Unmarshal(body, &entityBody); err != nil {
+		ctx.Error(
+			http.StatusNotFound,
+			err.Error(), nil,
+		)
+		return
+	}
+
+	// Validate if struct that I received is equal of documentation
+	if base.EqualFormatMap(entityBody, entityExpected) {
+		return
+	}
+
+	// write error of struct.
+	ctx.Error(
+		http.StatusNotFound,
+		"Input format is invalid with in documantation.",
+		map[string]interface{}{
+			"file_name":    path.Base(ctx.Data["seed_file"].(string)),
+			"exected":      entityExpected,
+			"received":     entityBody,
+		})
 }
