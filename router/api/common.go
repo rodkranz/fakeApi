@@ -104,7 +104,7 @@ func checkInputData(ctx *context.APIContext) {
 	body, err := ctx.Req.Body().Bytes()
 	if err != nil {
 		ctx.Error(
-			http.StatusNotFound,
+			http.StatusBadRequest,
 			err.Error(), nil,
 		)
 		return
@@ -114,7 +114,7 @@ func checkInputData(ctx *context.APIContext) {
 	entityBody := make(map[string]interface{})
 	if err := json.Unmarshal(body, &entityBody); err != nil {
 		ctx.Error(
-			http.StatusNotFound,
+			http.StatusBadRequest,
 			err.Error(), nil,
 		)
 		return
@@ -127,7 +127,7 @@ func checkInputData(ctx *context.APIContext) {
 
 	// write error of struct.
 	ctx.Error(
-		http.StatusNotFound,
+		http.StatusBadRequest,
 		"Input format is invalid with in documantation.",
 		map[string]interface{}{
 			"file_name":    path.Base(ctx.Data["seed_file"].(string)),
