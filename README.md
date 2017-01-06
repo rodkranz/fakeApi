@@ -13,18 +13,18 @@ It is a simple way to mock your api response.
 
 ## Summary ##
 
-    * [Download](#Download)
-    * [Requirements to build](#requirements-to-build)
-    * [Execute](#execute)
-    * [Seeds File](#seeds-file)
-    * [Multiple Responses for Seed](#multiples-response-for-seed)
-    * [Multiple Domains](#multiple-domains)
-    * [Delay of response](#delay-of-response)
-    * [Condition Status Code](#condition-status-code)
-    * [List of links available (api)](list-of-links-available)
-    * [Web documentation](#Web-documentation)
-    * [Seed file for documentation](#Seed-file-for-documentation)
-    * [FakeApi with Nginx](#configuring-FakeApi-with-Nginx) - (writing...)
+* [Download](#download)
+* [Requirements to build](#requirements-to-build)
+* [Execute](#execute)
+* [Seeds File](#seeds-file)
+* [Multiple Responses for Seed](#multiples-response-for-seed)
+* [Multiple Domains](#multiple-domains)
+* [Delay of response](#delay-of-response)
+* [Condition Status Code](#condition-status-code)
+* [List of links available (api)](list-of-links-available)
+* [Web documentation](#web-documentation)
+* [Seed file for documentation](#seed-file-for-documentation)
+* [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
 
