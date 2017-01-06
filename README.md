@@ -11,6 +11,20 @@ It is a simple way to mock your api response.
 * Version: 1.1.0
 * License: ISC
 
+## Summary ##
+
+    * [Download](#Download)
+    * [Requirements to build](#requirements-to-build)
+    * [Execute](#execute)
+    * [Seeds File](#seeds-file)
+    * [Multiple Responses for Seed](#multiples-response-for-seed)
+    * [Multiple Domains](#multiple-domains)
+    * [Delay of response](#delay-of-response)
+    * [Condition Status Code](#condition-status-code)
+    * [List of links available (api)](list-of-links-available)
+    * [Web documentation](#Web-documentation)
+    * [Seed file for documentation](#Seed-file-for-documentation)
+    * [FakeApi with Nginx](#configuring-FakeApi-with-Nginx) - (writing...)
 
 ## How to Compile it
 
@@ -58,7 +72,7 @@ It is a simple way to mock your api response.
 Execute `./fakeApi` or `./fakeApi server` to start server.
 
 
-## Seed File ##
+## Seeds File ##
 In a folder named `./fakes/default`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
 Use the file name to define the *URL* of api.
 
@@ -221,6 +235,52 @@ curl ... 0.01s user 0.01s system 0% cpu 3.020 total
 ```
 
 
+
+## Condition Status Code ##
+If you want to set a condition for your DATA response,
+you can test response `200` or `400` depending on value of request,
+you can set a additional field named `CONDITIONS` for that,
+if body of request match with field `DATA` will render the method that indicated `ACTION`.
+
+```
+{
+    "CONDITIONS": [
+        {
+            "ACTION": "POST_200",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "correct_password"
+            }
+        },
+        {
+            "ACTION": "POST_400",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "wrong_password"
+            }
+        }
+    ],
+    "INPUT": {
+        "username": "rodrigo.lopes@olx.com",
+        "password": "secret_password"
+    },
+    "POST_200": {
+        "message": "Account authentication with success",
+        "access_token": "2bc9ef94406489a5181fbd5898aa2202836810f2",
+        "success": "true"
+    },
+    "POST_400": {
+        "message": "Failed to authenticate user",
+        "success": "false",
+        "error": {
+            "exception": "Exception: invalid_grant",
+            "title": "Invalid username and password combination"
+        }
+    }
+}
+```
+
+
 ## List of links available ##
 
  You can see which links are available at FakeApi `seed` files, access the link `http://localhost:9090/api`
@@ -326,50 +386,6 @@ The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
 
-
-## Condition Status Code ##
-If you want to set a condition for your DATA response,
-you can test response `200` or `400` depending on value of request,
-you can set a additional field named `CONDITIONS` for that,
-if body of request match with field `DATA` will render the method that indicated `ACTION`.
-
-```
-{
-    "CONDITIONS": [
-        {
-            "ACTION": "POST_200",
-            "DATA": {
-                "username": "rodrigo.lopes@olx.com",
-                "password": "correct_password"
-            }
-        },
-        {
-            "ACTION": "POST_400",
-            "DATA": {
-                "username": "rodrigo.lopes@olx.com",
-                "password": "wrong_password"
-            }
-        }
-    ],
-    "INPUT": {
-        "username": "rodrigo.lopes@olx.com",
-        "password": "secret_password"
-    },
-    "POST_200": {
-        "message": "Account authentication with success",
-        "access_token": "2bc9ef94406489a5181fbd5898aa2202836810f2",
-        "success": "true"
-    },
-    "POST_400": {
-        "message": "Failed to authenticate user",
-        "success": "false",
-        "error": {
-            "exception": "Exception: invalid_grant",
-            "title": "Invalid username and password combination"
-        }
-    }
-}
-```
 
 ## Configuring *FakeApi* with *Nginx*.
 
