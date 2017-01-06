@@ -24,7 +24,7 @@ It is a simple way to mock your api response.
 * [List of links available (api)](#list-of-links-available)
 * [Web documentation](#web-documentation)
 * [Seed file for documentation](#seed-file-for-documentation)
-* [FakeApi with Nginx](#configuring-fakeApi-with-nginx) - (writing...)
+* [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
 
