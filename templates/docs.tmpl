@@ -13,9 +13,9 @@
     {{range $elm := .Doc.Docs}}
     <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}" id="table-{{$elm.Url | Marshal | SHA1}}">
         <div class="panel-heading">
-            <a href="#table-{{$elm.Url | Marshal | SHA1}}">
-                Url: <strong>{{$elm.Url}}</strong>
-            </a>
+
+            <a href="#table-{{$elm.Url | Marshal | SHA1}}">Url</a>:
+            <strong>{{$elm.Url}}</strong>
 
             {{if not $elm.Error }}
                 <button type="button"

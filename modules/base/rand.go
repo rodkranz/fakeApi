@@ -4,10 +4,10 @@
 package base
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 	"time"
-	"fmt"
 )
 
 func init() {
@@ -15,7 +15,7 @@ func init() {
 }
 
 func RandInt(min int, max int) int {
-	return min + rand.Intn(max - min)
+	return min + rand.Intn(max-min)
 }
 
 func RandStringPrefix(prefix string, l int) string {

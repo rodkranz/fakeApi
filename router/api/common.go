@@ -4,22 +4,23 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
+	"reflect"
 
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/entity"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
-	"github.com/rodkranz/fakeApi/module/files"
-
-	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/modules/base"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/entity"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/files"
 )
 
 // isFileExists get url and check if file exists in seed folder
 // if not exist set 404 error.
 func isFileExists(ctx *context.APIContext, fake *fakeApi.ApiFake) string {
-	file, err := fake.GetSeedPath("")
+	file, err := fake.GetSeedPath(ctx.Context.Req.URL.Path[1:])
 
 	if err != nil {
 		ctx.Error(
@@ -31,12 +32,13 @@ func isFileExists(ctx *context.APIContext, fake *fakeApi.ApiFake) string {
 			})
 	}
 
-	ctx.Data["seed_file"] = file
+	ctx.Data["seedFile"] = file
 	return file
 }
 
+// load seed file depending on route
 func loadSeedFile(ctx *context.APIContext) (endpoint map[string]interface{}) {
-	file := ctx.Data["seed_file"].(string)
+	file := ctx.Data["seedFile"].(string)
 	endpoint = entity.Endpoint{}
 	err := files.Load(file, endpoint)
 	ctx.Data["endpoints"] = endpoint
@@ -61,21 +63,10 @@ func loadSeedFile(ctx *context.APIContext) (endpoint map[string]interface{}) {
 // getDataByHeaderResponseCode returns data belongs url + method + status
 func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake) interface{} {
 	endpoint := ctx.Data["endpoints"].(map[string]interface{})
-
-	method, status, has := fake.GetMethodAndStatusCode()
-	if !has {
-		method_status, _ := base.RandMapString(endpoint, method)
-		method, status = base.SplitMethodAndStatus(method_status)
-	}
-
-	// set in context to share with application
-	ctx.Data["method"] = method
-	ctx.Data["status_code"] = status
-
-	method_status := fmt.Sprintf("%v_%v", method, status)
+	methodStatusCode := ctx.Data["methodStatusCode"].(string)
 
 	// if find response return and finish function
-	if data, has := endpoint[method_status]; has {
+	if data, has := endpoint[methodStatusCode]; has {
 		return data
 	}
 
@@ -84,11 +75,96 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		http.StatusNotFound,
 		"Method in seed file not found.",
 		map[string]interface{}{
-			"status_code": status,
-			"method":      method,
+			"status_code": ctx.Data["method"],
+			"method":      ctx.Data["statusCode"],
 			"domain":      fake.Domain,
-			"file_name":   path.Base(ctx.Data["seed_file"].(string)),
+			"file_name":   path.Base(ctx.Data["seedFile"].(string)),
 		})
 
 	return nil
+}
+
+// checkInputData check if has "input" at seed and match if format is correct
+func checkInputData(ctx *context.APIContext) {
+	endpoint := ctx.Data["endpoints"].(map[string]interface{})
+	// check if have format for input.
+	entityExpected, has := endpoint["INPUT"]
+	if !has {
+		return
+	}
+
+	body, err := ctx.Req.Body().Bytes()
+	if err != nil {
+		ctx.Error(
+			http.StatusBadRequest,
+			err.Error(), nil,
+		)
+		return
+	}
+	defer ctx.Req.Body().ReadCloser()
+
+	entityBody := make(map[string]interface{})
+	if err := json.Unmarshal(body, &entityBody); err != nil {
+		ctx.Error(
+			http.StatusBadRequest,
+			err.Error(), nil,
+		)
+		return
+	}
+	ctx.Data["Body"] = entityBody
+
+	// Validate if struct that I received is equal of documentation
+	if base.EqualFormatMap(entityBody, entityExpected) {
+		return
+	}
+
+	// write error of struct.
+	ctx.Error(
+		http.StatusBadRequest,
+		"Input format is invalid with in documantation.",
+		map[string]interface{}{
+			"file_name": path.Base(ctx.Data["seedFile"].(string)),
+			"exected":   entityExpected,
+			"received":  entityBody,
+		})
+}
+
+func checkMethodAndStatus(ctx *context.APIContext, fake *fakeApi.ApiFake) {
+	endpoint := ctx.Data["endpoints"].(map[string]interface{})
+
+	method, statusCode, has := fake.GetMethodAndStatusCode()
+	if !has {
+		methodStatusCode, _ := base.RandMapString(endpoint, method)
+		method, statusCode = base.SplitMethodAndStatus(methodStatusCode)
+	}
+
+	// set in context to share with application
+	ctx.Data["method"] = method
+	ctx.Data["statusCode"] = statusCode
+	ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v", method, statusCode)
+
+}
+
+// checkCondition if has condition in seed file
+func checkCondition(ctx *context.APIContext) {
+	if ctx.Data["endpoints"] == nil {
+		return
+	}
+
+	endpoints := ctx.Data["endpoints"].(map[string]interface{})
+	conditions, has := endpoints["CONDITIONS"].([]interface{})
+	if !has {
+		return
+	}
+
+	for _, v := range conditions {
+		condition := v.(map[string]interface{})
+		if reflect.DeepEqual(ctx.Data["Body"], condition["DATA"]) {
+			ctx.Data["methodStatusCode"] = condition["ACTION"]
+
+			_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))
+			ctx.Data["statusCode"] = statusCode
+			return
+		}
+	}
 }

@@ -10,30 +10,28 @@ import (
 	"gopkg.in/urfave/cli.v2"
 
 	"github.com/rodkranz/fakeApi/cmd"
-	"github.com/rodkranz/fakeApi/module/settings"
+	"github.com/rodkranz/fakeApi/modules/setting"
 )
 
-const VER = "1.1.0"
+const VER = "1.3.0"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	settings.APP_VER = VER
+	setting.AppVer = VER
 }
 
 func main() {
 	app := cli.App{
-		Name: "FakeApi",
-		Usage: "Build a api server",
+		Name:    "FakeApi",
+		Usage:   "Build a api server",
 		Version: VER,
 		Commands: []*cli.Command{
-			cmd.Server,
+			cmd.Web,
 		},
 	}
-
 	app.Flags = append(app.Flags, []cli.Flag{}...)
-
 	if len(os.Args) == 1 {
-		os.Args = append(os.Args, cmd.Server.Name)
+		os.Args = append(os.Args, cmd.Web.Name)
 	}
 
 	app.Run(os.Args)

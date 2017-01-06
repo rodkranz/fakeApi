@@ -4,7 +4,7 @@
 package template
 
 import (
-	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/modules/base"
 	"html/template"
 )
 

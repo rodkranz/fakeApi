@@ -1,10 +1,56 @@
 {
     "GET_200": {
-        "message": "Fake Api is working.",
-        "resource": {
-            "domain": "default",
-            "file_name": "api_test.json"
-        },
+        "message": "Status OK",
+        "data": "Test fake api success!",
+        "method": "GET",
+        "status": 200
+    },
+    "GET_400": {
+        "message": "Status Bad Request",
+        "data": "Test fake api success!",
+        "method": "GET",
+        "status": 400
+    },
+    "GET_500": {
+        "message": "Status Internal Server Error",
+        "data": "Test fake api success!",
+        "method": "GET",
         "status": 500
+    },
+    "POST_201": {
+        "message": "Status Created",
+        "data": "Test fake api success!",
+        "method": "POST",
+        "status": 201
+    },
+    "POST_400": {
+        "message": "Status Bad Request",
+        "data": "Test fake api success!",
+        "method": "POST",
+        "status": 400
+    },
+    "PUT_200": {
+        "message": "Status OK",
+        "data": "Test fake api success!",
+        "method": "PUT",
+        "status": 200
+    },
+    "PUT_500": {
+        "message": "Status Internal Server Error",
+        "data": "Test fake api success!",
+        "method": "PUT",
+        "status": 500
+    },
+    "DELETE_201": {
+        "message": "Status Created",
+        "data": "Test fake api success!",
+        "method": "DELETE",
+        "status": 201
+    },
+    "DELETE_400": {
+        "message": "Status Bad Request",
+        "data": "Test fake api success!",
+        "method": "DELETE",
+        "status": 400
     }
 }

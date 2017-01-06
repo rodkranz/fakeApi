@@ -4,8 +4,8 @@
 package api
 
 import (
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
 )
 
 func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
@@ -22,12 +22,29 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
+	// validate if post/put/delete has the same format of input
+	checkInputData(ctx)
+	if ctx.Written() {
+		return
+	}
+
+	checkMethodAndStatus(ctx, fakeApi)
+	if ctx.Written() {
+		return
+	}
+
+	// validate if has condition
+	checkCondition(ctx)
+	if ctx.Written() {
+		return
+	}
+
 	// Find data and retrieve
 	data := getDataByHeaderResponseCode(ctx, fakeApi)
 	if ctx.Written() {
 		return
 	}
 
-	statusCode := ctx.Data["status_code"].(int)
+	statusCode := ctx.Data["statusCode"].(int)
 	ctx.JSON(statusCode, data)
 }

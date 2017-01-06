@@ -6,8 +6,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/rodkranz/fakeApi/module/context"
-	"github.com/rodkranz/fakeApi/module/fakeApi"
+	"github.com/rodkranz/fakeApi/modules/context"
+	"github.com/rodkranz/fakeApi/modules/fakeApi"
 	"github.com/rodkranz/fakeApi/router/common"
 )
 

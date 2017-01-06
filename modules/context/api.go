@@ -4,10 +4,11 @@
 package context
 
 import (
-	"github.com/rodkranz/fakeApi/module/settings"
 	"gopkg.in/macaron.v1"
-	"log"
 	"runtime"
+
+	"github.com/rodkranz/fakeApi/modules/log"
+	"github.com/rodkranz/fakeApi/modules/setting"
 )
 
 type APIContext struct {
@@ -22,7 +23,7 @@ func (ctx *APIContext) Error(status int, title string, obj interface{}) {
 	}
 
 	if status == 500 {
-		log.Printf("%s: %s", title, message)
+		log.Error(4, "%s: %s", title, message)
 	}
 
 	ctx.JSON(status, map[string]interface{}{
@@ -52,9 +53,9 @@ func APIContexter() macaron.Handler {
 		ctx.Resp.Header().Set("Server", "GoLang "+runtime.Version())
 		ctx.Resp.Header().Set("Developer", "Rodrigo Lopes")
 
-		if settings.CrossDomain {
-			//ctx.Resp.Header().Set("Access-Control-Allow-Origin", "*")
-			ctx.Resp.Header().Set("Access-Control-Allow-Origin", ctx.Req.Host)
+		if setting.AllowCrossDomain {
+			//ctx.Resp.Header().Set("Access-Control-Allow-Origin", ctx.Req.Host)
+			ctx.Resp.Header().Set("Access-Control-Allow-Origin", "*")
 			ctx.Resp.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			ctx.Resp.Header().Set("Access-Control-Max-Age", "1000")
 			ctx.Resp.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, X-Fake-Response-Code, X-Fake-Domain, X-Fake-Delay")

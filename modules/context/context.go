@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/macaron.v1"
 
-	"github.com/rodkranz/fakeApi/module/base"
+	"github.com/rodkranz/fakeApi/modules/base"
 )
 
 //

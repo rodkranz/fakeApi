@@ -8,9 +8,24 @@ It is a simple way to mock your api response.
 ## Source ##
 
 * FakeApi Source
-* Version: 1.1.0
-* License: ISC
+* Version: 1.3.0
+* License: MIT-style
 
+## Summary ##
+
+* [Download](#download)
+* [Requirements to build](#requirements-to-build)
+* [Execute](#execute)
+* [Seeds File](#seeds-file)
+* [Multiple Responses for Seed](#multiples-response-for-seed)
+* [Multiple Domains](#multiple-domains)
+* [Delay of response](#delay-of-response)
+* [Condition Status Code](#condition-status-code)
+* [List of links available (api)](#list-of-links-available)
+* [Web documentation](#web-documentation)
+* [Seed file for documentation](#seed-file-for-documentation)
+* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor) - (writing...)
+* [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
 
@@ -41,24 +56,24 @@ It is a simple way to mock your api response.
 
 #### Compiling to *Linux*
 
-	$ env GOOS=linux GOARCH=arm GOARM=7 go build -o fakeApi main.go
+	$ env GOOS=linux GOARCH=arm GOARM=7 go build -o server main.go
 
 
 #### Compiling to *MacOSX*
 
-	$ env GOOS=darwin GOARCH=386 go build -o fakeApi main.go
+	$ env GOOS=darwin GOARCH=386 go build -o server main.go
 
 
 #### Compiling to *Windows*
 
-	$ env GOOS=windows GOARCH=386 go build -o fakeApi.exe main.go
+	$ env GOOS=windows GOARCH=386 go build -o server.exe main.go
 
 ## Execute ##
 
-Execute `./fakeApi` or `./fakeApi server` to start server.
+Execute `./server` or `./server web` to start server.
 
 
-## Seed File ##
+## Seeds File ##
 In a folder named `./fakes/default`, you need to have the **seed** (json files) that will represent your api, the server will read all files inside folder and load them.
 Use the file name to define the *URL* of api.
 
@@ -221,6 +236,52 @@ curl ... 0.01s user 0.01s system 0% cpu 3.020 total
 ```
 
 
+
+## Condition Status Code ##
+If you want to set a condition for your DATA response,
+you can test response `200` or `400` depending on value of request,
+you can set a additional field named `CONDITIONS` for that,
+if body of request match with field `DATA` will render the method that indicated `ACTION`.
+
+```
+{
+    "CONDITIONS": [
+        {
+            "ACTION": "POST_200",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "correct_password"
+            }
+        },
+        {
+            "ACTION": "POST_400",
+            "DATA": {
+                "username": "rodrigo.lopes@olx.com",
+                "password": "wrong_password"
+            }
+        }
+    ],
+    "INPUT": {
+        "username": "rodrigo.lopes@olx.com",
+        "password": "secret_password"
+    },
+    "POST_200": {
+        "message": "Account authentication with success",
+        "access_token": "2bc9ef94406489a5181fbd5898aa2202836810f2",
+        "success": "true"
+    },
+    "POST_400": {
+        "message": "Failed to authenticate user",
+        "success": "false",
+        "error": {
+            "exception": "Exception: invalid_grant",
+            "title": "Invalid username and password combination"
+        }
+    }
+}
+```
+
+
 ## List of links available ##
 
  You can see which links are available at FakeApi `seed` files, access the link `http://localhost:9090/api`
@@ -297,7 +358,8 @@ this node needs to have set `title` and `description`, you can see the example a
     * description: Text more descriptive about what your endpoint does.
  * **INPUT** :
 
-    * The text saying what your endpoints are expecting to receive from client/frontend.
+    * The text saying what your endpoints are expecting to receive from client/frontend, it validate if format of request is equal what was written in seed.
+     
 
 
 *P.S*: Seed file with comments:
@@ -324,6 +386,53 @@ this node needs to have set `title` and `description`, you can see the example a
 The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
+
+
+## Configuring *FakeApi* with *Supervisor*.
+
+You need to enter in folder `/etc/supervisor/conf.d` and create a file with name `fake-api.conf`
+and inside you have so set the environment.
+
+ * My app is in `/var/www/fakeApi`
+ * My los are in `/var/log/fakeApi`
+
+```
+[program:FakeApi]
+environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapiFAKE_API_CUSTOM=/var/www/fakeapi
+directory=/var/www/fakeapi
+command=/var/www/fakeapi/server web
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/fakeApi/err.log
+stdout_logfile=/var/log/fakeApi/out.log
+```
+
+## Configuring *FakeApi* with *Nginx*.
+c
+> I am writing this step ....
+
+```
+server {
+    listen   80; ## listen for ipv4; this line is default and implied
+    #listen   [::]:80 default_server ipv6only=on; ## listen for ipv6
+
+    root /usr/share/nginx/www;
+    index index.html index.htm;
+
+    # Make site accessible from http://localhost/
+    server_name localhost fake-api.local fake-api.olx.com;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Fake-Domain $host;
+        proxy_set_header Host $host;
+        proxy_pass http://127.0.0.1:9090;
+    }
+
+    # Next config of nginx...
+}
+```
 
 ---
 *P.S*: By default the cross domain is always enabled.

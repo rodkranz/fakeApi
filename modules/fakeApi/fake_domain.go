@@ -5,7 +5,6 @@ package fakeApi
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"strconv"
@@ -13,6 +12,8 @@ import (
 	"time"
 
 	"gopkg.in/macaron.v1"
+
+	"github.com/rodkranz/fakeApi/modules/log"
 )
 
 type ApiFakeOptions struct {
@@ -47,10 +48,6 @@ func (a *ApiFake) GetMethodAndStatusCode() (string, int, bool) {
 
 // GetSeedPath returns the path of seed file.
 func (a *ApiFake) GetSeedPath(seed string) (string, error) {
-	if len(seed) == 0 {
-		seed = a.Context.Req.URL.Path[1:]
-	}
-
 	seed = strings.Replace(seed, "__", "#", -1)
 	seed = strings.Replace(seed, "/", "_", -1)
 	seed = strings.Replace(seed, "#", "_", -1)
@@ -122,7 +119,8 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 	// Check if fakes folder exist
 	if isNotExist(opt.BaseFolder) {
 		if err := os.Mkdir(opt.BaseFolder, 0755); err != nil {
-			log.Fatalf("Please create a 'fakes' folder: [%v]", opt.BaseFolder)
+			log.Fatal(4, "Please create a 'fakes' folder: [%v]", opt.BaseFolder)
+			log.Fatal(4, "Please create a 'fakes' folder: [%v]", opt.BaseFolder)
 		}
 	}
 
@@ -130,7 +128,7 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 	p := path.Join(opt.BaseFolder, opt.DefaultApi)
 	if isNotExist(p) {
 		if err := os.Mkdir(path.Join(p), 0755); err != nil {
-			log.Fatalf("Please create a 'default' folder: [%v]", p)
+			log.Fatal(4, "Please create a 'default' folder: [%v]", p)
 		}
 	}
 
