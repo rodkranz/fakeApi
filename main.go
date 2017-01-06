@@ -22,18 +22,16 @@ func init() {
 
 func main() {
 	app := cli.App{
-		Name: "FakeApi",
-		Usage: "Build a api server",
+		Name:    "FakeApi",
+		Usage:   "Build a api server",
 		Version: VER,
 		Commands: []*cli.Command{
-			cmd.Server,
+			cmd.Web,
 		},
 	}
-
 	app.Flags = append(app.Flags, []cli.Flag{}...)
-
 	if len(os.Args) == 1 {
-		os.Args = append(os.Args, cmd.Server.Name)
+		os.Args = append(os.Args, cmd.Web.Name)
 	}
 
 	app.Run(os.Args)

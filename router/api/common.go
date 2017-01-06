@@ -4,17 +4,17 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path"
-	"encoding/json"
+	"reflect"
 
+	"github.com/rodkranz/fakeApi/modules/base"
 	"github.com/rodkranz/fakeApi/modules/context"
 	"github.com/rodkranz/fakeApi/modules/entity"
 	"github.com/rodkranz/fakeApi/modules/fakeApi"
 	"github.com/rodkranz/fakeApi/modules/files"
-	"github.com/rodkranz/fakeApi/modules/base"
-	"reflect"
 )
 
 // isFileExists get url and check if file exists in seed folder
@@ -123,9 +123,9 @@ func checkInputData(ctx *context.APIContext) {
 		http.StatusBadRequest,
 		"Input format is invalid with in documantation.",
 		map[string]interface{}{
-			"file_name":    path.Base(ctx.Data["seedFile"].(string)),
-			"exected":      entityExpected,
-			"received":     entityBody,
+			"file_name": path.Base(ctx.Data["seedFile"].(string)),
+			"exected":   entityExpected,
+			"received":  entityBody,
 		})
 }
 

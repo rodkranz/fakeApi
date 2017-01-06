@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/go-macaron/gzip"
 	"gopkg.in/macaron.v1"
@@ -24,11 +25,10 @@ import (
 
 	routeApi "github.com/rodkranz/fakeApi/router/api"
 	routeWeb "github.com/rodkranz/fakeApi/router/web"
-	"time"
 )
 
-var Server = &cli.Command{
-	Name:        "server",
+var Web = &cli.Command{
+	Name:        "web",
 	Usage:       "Run Fake API Server",
 	Description: `Start server fake.`,
 	Action:      runServer,
@@ -113,9 +113,9 @@ func runServer(ctx *cli.Context) error {
 			ReadTimeout:  5 * time.Second,
 			WriteTimeout: 10 * time.Second,
 			IdleTimeout:  120 * time.Second,
-			Addr: listenAddr,
-			TLSConfig: &tls.Config{MinVersion: tls.VersionTLS10},
-			Handler: m,
+			Addr:         listenAddr,
+			TLSConfig:    &tls.Config{MinVersion: tls.VersionTLS10},
+			Handler:      m,
 		}
 		err = server.ListenAndServeTLS(setting.CertFile, setting.KeyFile)
 	default:

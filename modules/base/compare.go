@@ -23,8 +23,8 @@ func EqualFormatMap(x, y interface{}) bool {
 		return false
 	}
 
-	ym := y.(map[string]interface {})
-	xm := x.(map[string]interface {})
+	ym := y.(map[string]interface{})
+	xm := x.(map[string]interface{})
 	for k := range xm {
 		if _, has := ym[k]; !has {
 			return false

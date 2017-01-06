@@ -24,6 +24,7 @@ It is a simple way to mock your api response.
 * [List of links available (api)](#list-of-links-available)
 * [Web documentation](#web-documentation)
 * [Seed file for documentation](#seed-file-for-documentation)
+* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor) - (writing...)
 * [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
@@ -55,21 +56,21 @@ It is a simple way to mock your api response.
 
 #### Compiling to *Linux*
 
-	$ env GOOS=linux GOARCH=arm GOARM=7 go build -o fakeApi main.go
+	$ env GOOS=linux GOARCH=arm GOARM=7 go build -o server main.go
 
 
 #### Compiling to *MacOSX*
 
-	$ env GOOS=darwin GOARCH=386 go build -o fakeApi main.go
+	$ env GOOS=darwin GOARCH=386 go build -o server main.go
 
 
 #### Compiling to *Windows*
 
-	$ env GOOS=windows GOARCH=386 go build -o fakeApi.exe main.go
+	$ env GOOS=windows GOARCH=386 go build -o server.exe main.go
 
 ## Execute ##
 
-Execute `./fakeApi` or `./fakeApi server` to start server.
+Execute `./server` or `./server web` to start server.
 
 
 ## Seeds File ##
@@ -387,8 +388,27 @@ The web page will be rendered this `seed` above like it:
 ![Docs with texts](./docs/docs_04.png)
 
 
-## Configuring *FakeApi* with *Nginx*.
+## Configuring *FakeApi* with *Supervisor*.
 
+You need to enter in folder `/etc/supervisor/conf.d` and create a file with name `fake-api.conf`
+and inside you have so set the environment.
+
+ * My app is in `/var/www/fakeApi`
+ * My los are in `/var/log/fakeApi`
+
+```
+[program:FakeApi]
+environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapiFAKE_API_CUSTOM=/var/www/fakeapi
+directory=/var/www/fakeapi
+command=/var/www/fakeapi/server web
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/fakeApi/err.log
+stdout_logfile=/var/log/fakeApi/out.log
+```
+
+## Configuring *FakeApi* with *Nginx*.
+c
 > I am writing this step ....
 
 ```
