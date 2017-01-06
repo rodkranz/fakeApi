@@ -328,8 +328,8 @@ The web page will be rendered this `seed` above like it:
 
 
 ## Condition Status Code ##
-If you want to set a condition for response of your post, 
-you want to test response `200` or `400` depends on value of request, 
+If you want to set a condition for your DATA response,
+you can test response `200` or `400` depending on value of request,
 you can set a additional field named `CONDITIONS` for that,
 if body of request match with field `DATA` will render the method that indicated `ACTION`.
 
@@ -374,6 +374,29 @@ if body of request match with field `DATA` will render the method that indicated
 ## Configuring *FakeApi* with *Nginx*.
 
 > I am writing this step ....
+
+```
+server {
+    listen   80; ## listen for ipv4; this line is default and implied
+    #listen   [::]:80 default_server ipv6only=on; ## listen for ipv6
+
+    root /usr/share/nginx/www;
+    index index.html index.htm;
+
+    # Make site accessible from http://localhost/
+    server_name localhost fake-api.local fake-api.olx.com;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Fake-Domain $host;
+        proxy_set_header Host $host;
+        proxy_pass http://127.0.0.1:9090;
+    }
+
+    # Next config of nginx...
+}
+```
 
 ---
 *P.S*: By default the cross domain is always enabled.
