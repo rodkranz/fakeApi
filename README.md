@@ -21,7 +21,7 @@ It is a simple way to mock your api response.
 * [Multiple Domains](#multiple-domains)
 * [Delay of response](#delay-of-response)
 * [Condition Status Code](#condition-status-code)
-* [List of links available (api)](list-of-links-available)
+* [List of links available (api)](#list-of-links-available)
 * [Web documentation](#web-documentation)
 * [Seed file for documentation](#seed-file-for-documentation)
 * [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
