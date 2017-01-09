@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"path"
 
 	"github.com/Unknwon/com"
 	"gopkg.in/ini.v1"
 
 	"github.com/rodkranz/fakeApi/modules/log"
-	"path"
 	"github.com/rodkranz/fakeApi/modules/bindata"
 )
 
@@ -65,7 +65,28 @@ var (
 
 	// Api
 	AllowCrossDomain bool
+
+	// Slack info
+	Slack struct {
+		Active bool
+		API    string
+		Name   string
+		Avatar string
+	}
+
+	// webhooks
+	WebHookList []string
+	WebHooks    map[string]*Webhook
 )
+
+type Webhook struct {
+	Name    string
+	Secret  string
+	Folder  string
+	Pull    bool
+	Channel string
+	Event   string
+}
 
 // execPath returns the executable path.
 func execPath() (string, error) {
@@ -153,7 +174,7 @@ func NewContext() {
 
 	sec = Cfg.Section("server")
 	AppUrl = sec.Key("ROOT_URL").MustString("http://localhost:9090/")
-	if AppUrl[len(AppUrl)-1] != '/' {
+	if AppUrl[len(AppUrl) - 1] != '/' {
 		AppUrl += "/"
 	}
 
@@ -188,4 +209,26 @@ func NewContext() {
 	sec = Cfg.Section("fakeApi")
 	SeedExtension = sec.Key("SEED_EXTENSION").MustString(".json")
 	SeedFolder = sec.Key("SEED_FOLDER").MustString("fakes")
+
+	sec = Cfg.Section("slack")
+	Slack.Active = sec.Key("ACTIVE").MustBool(false)
+	Slack.API = sec.Key("API").String()
+	Slack.Name = sec.Key("BOT_NAME").String()
+	Slack.Avatar = sec.Key("BOT_ICON").String()
+
+	sec = Cfg.Section("webhook")
+	WebHookList = sec.Key("hooks").Strings(",")
+	WebHooks = make(map[string]*Webhook, len(WebHookList))
+	for _, v := range Cfg.Section("webhook").KeysHash() {
+		sec = Cfg.Section("webhook." + v)
+		secret := sec.Key("SECRET").MustString("")
+		WebHooks[secret] = &Webhook{
+			Name:      v,
+			Secret:    secret,
+			Folder:    sec.Key("FOLDER").MustString(""),
+			Channel:   sec.Key("CHANNEL").MustString(""),
+			Event:     sec.Key("EVENT").MustString(""),
+			Pull:      sec.Key("PULL").MustBool(false),
+		}
+	}
 }
