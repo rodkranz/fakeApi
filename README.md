@@ -14,6 +14,7 @@ It is a simple way to mock your api response.
 ## Summary ##
 
 * [Download](#download)
+* [Configure bindata](#configure-bindata)
 * [Requirements to build](#requirements-to-build)
 * [Execute](#execute)
 * [Seeds File](#seeds-file)
@@ -53,6 +54,16 @@ It is a simple way to mock your api response.
  If you want to build in your own computer you need follow this steps below, if you don't want to build you can download at links above.
 
 * [GO Language](https://golang.org/doc/install)
+* [GO-Bindata](https://github.com/jteeuwen/go-bindata) - Component to help for settings
+    * To install `go get -u github.com/jteeuwen/go-bindata/...` 
+
+#### Configure Bindata 
+ 
+Use the script `init.sh` or the command 
+```
+$ go-bindata -o "./modules/bindata/bindata.go" -pkg "bindata" conf/*
+```
+    
 
 #### Compiling to *Linux*
 
