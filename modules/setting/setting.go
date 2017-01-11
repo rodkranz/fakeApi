@@ -7,16 +7,16 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"path"
 
 	"github.com/Unknwon/com"
 	"gopkg.in/ini.v1"
 
-	"github.com/rodkranz/fakeApi/modules/log"
 	"github.com/rodkranz/fakeApi/modules/bindata"
+	"github.com/rodkranz/fakeApi/modules/log"
 )
 
 type Scheme string
@@ -72,6 +72,7 @@ var (
 		API    string
 		Name   string
 		Avatar string
+		Icon   string
 	}
 
 	// webhooks
@@ -86,6 +87,7 @@ type Webhook struct {
 	Pull    bool
 	Channel string
 	Event   string
+	Ref     string
 }
 
 // execPath returns the executable path.
@@ -174,7 +176,7 @@ func NewContext() {
 
 	sec = Cfg.Section("server")
 	AppUrl = sec.Key("ROOT_URL").MustString("http://localhost:9090/")
-	if AppUrl[len(AppUrl) - 1] != '/' {
+	if AppUrl[len(AppUrl)-1] != '/' {
 		AppUrl += "/"
 	}
 
@@ -215,6 +217,7 @@ func NewContext() {
 	Slack.API = sec.Key("API").String()
 	Slack.Name = sec.Key("BOT_NAME").String()
 	Slack.Avatar = sec.Key("BOT_ICON").String()
+	Slack.Icon = sec.Key("ICON").MustString("")
 
 	sec = Cfg.Section("webhook")
 	WebHookList = sec.Key("hooks").Strings(",")
@@ -223,12 +226,13 @@ func NewContext() {
 		sec = Cfg.Section("webhook." + v)
 		secret := sec.Key("SECRET").MustString("")
 		WebHooks[secret] = &Webhook{
-			Name:      v,
-			Secret:    secret,
-			Folder:    sec.Key("FOLDER").MustString(""),
-			Channel:   sec.Key("CHANNEL").MustString(""),
-			Event:     sec.Key("EVENT").MustString(""),
-			Pull:      sec.Key("PULL").MustBool(false),
+			Name:    v,
+			Secret:  secret,
+			Folder:  path.Join(workDir, SeedFolder, sec.Key("FOLDER").MustString("")),
+			Channel: sec.Key("CHANNEL").MustString(""),
+			Ref:     sec.Key("REF").MustString(""),
+			Event:   sec.Key("EVENT").MustString(""),
+			Pull:    sec.Key("PULL").MustBool(false),
 		}
 	}
 }

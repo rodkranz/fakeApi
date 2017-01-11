@@ -2,26 +2,26 @@
 package gitlab
 
 import (
-	"time"
 	"encoding/json"
+	"time"
 )
 
 // Payload struct
 type Payload struct {
-	ObjectKind        string      `json:"object_kind"`
-	Before            string      `json:"before"`
-	After             string      `json:"after"`
-	Ref               string      `json:"ref"`
-	CheckoutSha       string      `json:"checkout_sha"`
-	UserID            int         `json:"user_id"`
-	UserName          string      `json:"user_name"`
-	UserEmail         string      `json:"user_email"`
-	UserAvatar        string      `json:"user_avatar"`
-	ProjectID         int         `json:"project_id"`
-	Project           Project     `json:"project"`
-	Repository        Repository  `json:"repository"`
-	Commits           []Commit    `json:"Commits"`
-	TotalCommitsCount int          `json:"total_commits_count"`
+	ObjectKind        string     `json:"object_kind"`
+	Before            string     `json:"before"`
+	After             string     `json:"after"`
+	Ref               string     `json:"ref"`
+	CheckoutSha       string     `json:"checkout_sha"`
+	UserID            int        `json:"user_id"`
+	UserName          string     `json:"user_name"`
+	UserEmail         string     `json:"user_email"`
+	UserAvatar        string     `json:"user_avatar"`
+	ProjectID         int        `json:"project_id"`
+	Project           Project    `json:"project"`
+	Repository        Repository `json:"repository"`
+	Commits           []Commit   `json:"Commits"`
+	TotalCommitsCount int        `json:"total_commits_count"`
 }
 
 // Project struct
@@ -55,14 +55,14 @@ type Repository struct {
 
 // Commit struct
 type Commit struct {
-	ID        string        `json:"id"`
-	Message   string        `json:"message"`
-	Timestamp time.Time    `json:"timestamp"`
-	URL       string        `json:"url"`
-	Author    Author        `json:"author"`
-	Added     []string      `json:"added"`
-	Modified  []string      `json:"modified"`
-	Removed   []string      `json:"removed"`
+	ID        string    `json:"id"`
+	Message   string    `json:"message"`
+	Timestamp time.Time `json:"timestamp"`
+	URL       string    `json:"url"`
+	Author    Author    `json:"author"`
+	Added     []string  `json:"added"`
+	Modified  []string  `json:"modified"`
+	Removed   []string  `json:"removed"`
 }
 
 // Author struct with information about user

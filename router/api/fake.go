@@ -9,7 +9,6 @@ import (
 )
 
 func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
-
 	// Validate if file exists if not render error 404.
 	isFileExists(ctx, fakeApi)
 	if ctx.Written() {
@@ -22,6 +21,12 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
+	// Load body context if has
+	loadContextBody(ctx)
+	if ctx.Written() {
+		return
+	}
+
 	// validate if post/put/delete has the same format of input
 	checkInputData(ctx)
 	if ctx.Written() {
@@ -29,12 +34,14 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 	}
 
 	checkMethodAndStatus(ctx, fakeApi)
+
 	if ctx.Written() {
 		return
 	}
 
 	// validate if has condition
 	checkCondition(ctx)
+
 	if ctx.Written() {
 		return
 	}

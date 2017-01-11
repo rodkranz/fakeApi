@@ -9,8 +9,8 @@ import (
 	"os/exec"
 
 	"github.com/rodkranz/fakeApi/modules/context"
-	"github.com/rodkranz/fakeApi/modules/setting"
 	"github.com/rodkranz/fakeApi/modules/gitlab"
+	"github.com/rodkranz/fakeApi/modules/setting"
 	"github.com/rodkranz/fakeApi/modules/slack"
 )
 
@@ -61,6 +61,14 @@ func Hook(ctx *context.Context) {
 			map[string]interface{}{
 				"message": "Error to try to parse body",
 				"error":   err,
+			})
+		return
+	}
+
+	if len(confWH.Ref) != 0 && confWH.Ref != payloadGitLab.Ref {
+		ctx.JSON(http.StatusOK,
+			map[string]interface{}{
+				"message": "Ignore for this ref.",
 			})
 		return
 	}

@@ -7,10 +7,10 @@ import (
 
 // Payload struct
 type Payload struct {
-	Channel     string       `json:"channel,omitempty"`
-	Username    string       `json:"username,omitempty"`
-	Text        string       `json:"text"`
-	Emotion     string       `json:"icon_emoji,omitempty"`
+	Channel     string        `json:"channel,omitempty"`
+	Username    string        `json:"username,omitempty"`
+	Text        string        `json:"text"`
+	Emotion     string        `json:"icon_emoji,omitempty"`
 	Attachments []*Attachment `json:"attachments,omitempty"`
 }
 

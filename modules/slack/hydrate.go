@@ -13,9 +13,9 @@ import (
 
 func (p *Payload) HydrateFromGitLab(g *gitlab.Payload, w *setting.Webhook) {
 	p.Username = "GoBot"
-	p.Channel = w.Channel
+	p.Channel = fmt.Sprintf("#%v", w.Channel)
 	p.Username = setting.Slack.Name
-	p.Emotion = setting.Slack.Avatar
+	p.Emotion = setting.Slack.Icon
 
 	p.Text = fmt.Sprintf("[<%v|%v>] The %v has been updated!", g.Project.WebURL, g.Repository.Name, w.Name)
 
@@ -32,8 +32,8 @@ func (p *Payload) HydrateFromGitLab(g *gitlab.Payload, w *setting.Webhook) {
 	}
 
 	p.AppendAttachment(&Attachment{
-		Footer: setting.Slack.Name,
+		Footer:     setting.Slack.Name,
 		FooterIcon: setting.Slack.Avatar,
-		Ts: int32(time.Now().Local().Unix()),
+		Ts:         int32(time.Now().Local().Unix()),
 	})
 }

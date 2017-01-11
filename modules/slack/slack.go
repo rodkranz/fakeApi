@@ -2,12 +2,12 @@
 package slack
 
 import (
-	"net/url"
-	"net/http"
+	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 
 	"github.com/rodkranz/fakeApi/modules/setting"
-	"fmt"
 )
 
 // Send payload to slack for publish
@@ -30,7 +30,6 @@ func Notify(s *Payload) (string, error) {
 		return "", &ErrSlackPost{Err: err}
 	}
 	defer res.Body.Close()
-
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
