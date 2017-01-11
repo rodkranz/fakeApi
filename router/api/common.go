@@ -84,15 +84,7 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 	return nil
 }
 
-// checkInputData check if has "input" at seed and match if format is correct
-func checkInputData(ctx *context.APIContext) {
-	endpoint := ctx.Data["endpoints"].(map[string]interface{})
-	// check if have format for input.
-	entityExpected, has := endpoint["INPUT"]
-	if !has {
-		return
-	}
-
+func loadContextBody(ctx *context.APIContext) {
 	body, err := ctx.Req.Body().Bytes()
 	if err != nil {
 		ctx.Error(
@@ -103,6 +95,10 @@ func checkInputData(ctx *context.APIContext) {
 	}
 	defer ctx.Req.Body().ReadCloser()
 
+	if len(body) == 0 {
+		return
+	}
+
 	entityBody := make(map[string]interface{})
 	if err := json.Unmarshal(body, &entityBody); err != nil {
 		ctx.Error(
@@ -112,6 +108,19 @@ func checkInputData(ctx *context.APIContext) {
 		return
 	}
 	ctx.Data["Body"] = entityBody
+}
+
+// checkInputData check if has "input" at seed and match if format is correct
+func checkInputData(ctx *context.APIContext) {
+	endpoint := ctx.Data["endpoints"].(map[string]interface{})
+	// check if have format for input.
+	entityExpected, has := endpoint["INPUT"]
+	if !has {
+		return
+	}
+
+	// body
+	entityBody := ctx.Data["Body"].(map[string]interface{})
 
 	// Validate if struct that I received is equal of documentation
 	if base.EqualFormatMap(entityBody, entityExpected) {

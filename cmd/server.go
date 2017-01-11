@@ -77,6 +77,8 @@ func runServer(ctx *cli.Context) error {
 	// Web
 	m.Get("/", routeWeb.Home)
 	m.Get("/docs", routeWeb.Docs)
+	m.Any("/webhook", routeWeb.Hook)
+
 	m.Options("*", routeWeb.HandleOptions)
 
 	// Api

@@ -13,15 +13,19 @@ import (
 	"github.com/rodkranz/fakeApi/modules/base"
 	"github.com/rodkranz/fakeApi/modules/files"
 	"github.com/rodkranz/fakeApi/modules/setting"
+	//"sort"
+	"sort"
 )
 
 type Docs struct {
-	Domain string
-	Path   string
-	Docs   []*Doc
+	Domain  string
+	Path    string
+	Docs    map[string]*Doc
+	Indices []string
 }
 
 func (d *Docs) LoadSeeds() {
+	d.Docs = make(map[string]*Doc)
 	fs, _ := ioutil.ReadDir(d.Path)
 	for _, f := range fs {
 		if !f.IsDir() && path.Ext(f.Name()) == setting.SeedExtension {
@@ -30,9 +34,17 @@ func (d *Docs) LoadSeeds() {
 				Url:  fmt.Sprintf("/%v", base.PathToUrl(f.Name())),
 			}
 			doc.LoadInfo()
-			d.Docs = append(d.Docs, doc)
+			d.Docs[doc.Url] = doc
 		}
 	}
+
+	d.Indices = make([]string, len(d.Docs))
+	i := 0
+	for url := range d.Docs {
+		d.Indices[i] = url
+		i++
+	}
+	sort.Strings(d.Indices)
 }
 
 type Doc struct {

@@ -2,26 +2,26 @@
      {
         "os": "darwin",
         "arch": "amd64",
-        "filename": "fakeApi"
+        "filename": "server"
     },
     {
         "os": "linux",
         "arch": "386",
-        "filename": "fakeApi"
+        "filename": "server"
     },
     {
         "os": "linux",
         "arch": "amd64",
-        "filename": "fakeApi"
+        "filename": "server"
     },
     {
         "os": "windows",
         "arch": "386",
-        "filename": "fakeApi.exe"
+        "filename": "server.exe"
     },
     {
         "os": "windows",
         "arch": "amd64",
-        "filename": "fakeApi.exe"
+        "filename": "server.exe"
     }   
 ]
