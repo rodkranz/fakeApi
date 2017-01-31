@@ -4,50 +4,108 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"path"
+	"sort"
+	"strconv"
 	"strings"
 
+	"errors"
 	"github.com/rodkranz/fakeApi/modules/base"
 	"github.com/rodkranz/fakeApi/modules/files"
 	"github.com/rodkranz/fakeApi/modules/setting"
-	//"sort"
-	"sort"
 )
 
 type Docs struct {
-	Domain  string
-	Path    string
+	Domain string
+	Path   string
+	Info   *Info
+	Groups map[int]*Group
+}
+
+type Group struct {
+	Error   error
 	Docs    map[string]*Doc
 	Indices []string
 }
 
 func (d *Docs) LoadSeeds() {
-	d.Docs = make(map[string]*Doc)
+	d.Groups = make(map[int]*Group)
 	fs, _ := ioutil.ReadDir(d.Path)
 	for _, f := range fs {
+		if !f.IsDir() && strings.ToLower(f.Name()) == "docs.json" {
+			info := &Info{
+				Path: fmt.Sprintf("%v/%v", d.Path, f.Name()),
+			}
+			info.LoadInfo()
+			d.Info = info
+			continue
+		}
+
 		if !f.IsDir() && path.Ext(f.Name()) == setting.SeedExtension {
 			doc := &Doc{
 				Path: fmt.Sprintf("%v/%v", d.Path, f.Name()),
 				Url:  fmt.Sprintf("/%v", base.PathToUrl(f.Name())),
 			}
 			doc.LoadInfo()
-			d.Docs[doc.Url] = doc
+
+			str, has := d.Groups[doc.Level]
+			if !has {
+				str = &Group{
+					Docs: make(map[string]*Doc),
+				}
+				d.Groups[doc.Level] = str
+			}
+
+			str.Docs[doc.Url] = doc
+			d.Groups[doc.Level] = str
 		}
 	}
 
-	d.Indices = make([]string, len(d.Docs))
-	i := 0
-	for url := range d.Docs {
-		d.Indices[i] = url
-		i++
+	if d.Info == nil {
+		d.Info = &Info{Domain: d.Domain, Path: d.Path, Error: errors.New("Doc file not found.")}
 	}
-	sort.Strings(d.Indices)
+
+	for lvl, grp := range d.Groups {
+		grp.Indices = make([]string, len(grp.Docs))
+		i := 0
+		for url := range grp.Docs {
+			grp.Indices[i] = url
+			i++
+		}
+		sort.Strings(grp.Indices)
+		d.Groups[lvl] = grp
+	}
+}
+
+type Info struct {
+	Title       string
+	SubTitle    string
+	Description string
+	Domain      string
+	Group       map[int]string
+	Path        string
+	Error       error
+}
+
+func (i *Info) LoadInfo() {
+	data, err := ioutil.ReadFile(i.Path)
+	if err != nil {
+		i.Error = err
+		return
+	}
+
+	if err = json.Unmarshal(data, i); err != nil {
+		i.Error = fmt.Errorf("Something is worng with file %s error %s", path.Base(i.Path), err.Error())
+		return
+	}
 }
 
 type Doc struct {
+	Level     int
 	Path      string
 	Url       string
 	Error     error
@@ -59,6 +117,7 @@ type Doc struct {
 func (d *Doc) LoadInfo() {
 	eps := make(map[string]interface{})
 	if d.Error = files.Load(d.Path, eps); d.Error != nil {
+		d.Level = -1
 		return
 	}
 
@@ -79,6 +138,12 @@ func (d *Doc) LoadInfo() {
 			if desc, has := docInfo["description"]; has {
 				d.Desc = desc.(string)
 			}
+			if lvl, has := docInfo["level"]; has {
+				iLvl, err := strconv.ParseInt(fmt.Sprintf("%v", lvl), 10, 64)
+				if err == nil {
+					d.Level = int(iLvl)
+				}
+			}
 			continue
 		}
 
@@ -93,7 +158,6 @@ func (d *Doc) LoadInfo() {
 			ep.Method, ep.StatusCode = base.SplitMethodAndStatus(methodAndStatus)
 			ep.StatusText = http.StatusText(ep.StatusCode)
 			ep.Data = data
-
 		}
 
 		d.Endpoints = append(d.Endpoints, ep)

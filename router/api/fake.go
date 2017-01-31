@@ -21,8 +21,14 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
-	// Load body context if has
+	// Load body context if it has
 	loadContextBody(ctx)
+	if ctx.Written() {
+		return
+	}
+
+	// Load params context if it has
+	loadContextParam(ctx)
 	if ctx.Written() {
 		return
 	}
@@ -34,14 +40,12 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 	}
 
 	checkMethodAndStatus(ctx, fakeApi)
-
 	if ctx.Written() {
 		return
 	}
 
 	// validate if has condition
 	checkCondition(ctx)
-
 	if ctx.Written() {
 		return
 	}
