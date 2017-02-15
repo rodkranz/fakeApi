@@ -24,8 +24,9 @@ It is a simple way to mock your api response.
 * [Condition Status Code](#condition-status-code)
 * [List of links available (api)](#list-of-links-available)
 * [Web documentation](#web-documentation)
+* [Web documentation category](#docs-with-category)
 * [Seed file for documentation](#seed-file-for-documentation)
-* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor) - (writing...)
+* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor)
 * [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
@@ -346,7 +347,7 @@ The docs will be generate automatic
 You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs).
 this page will be generate in realtime the documents that you have in `JSONS` file.
 
-This is an example of page:
+This is a simple example of page:
 
 ![Docs Home Page](./docs/docs_01.png)
 
@@ -362,16 +363,15 @@ If the json has error the docs will render like this
 
 If you want to show more descriptions about your endpoint it is possible if you create a node `DOC` at you `Seed` files
 this node needs to have set `title` and `description`, you can see the example above.
-
+    
  * **DOC**:
-
+    * level: It is the category that this json belongs to. 
     * title: Title with little text about endpoint.
     * description: Text more descriptive about what your endpoint does.
  * **INPUT** :
 
     * The text saying what your endpoints are expecting to receive from client/frontend, it validate if format of request is equal what was written in seed.
      
-
 
 *P.S*: Seed file with comments:
 
@@ -398,6 +398,62 @@ The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
 
+## Docs with Category ##
+Maybe you and to organize yours seed by categories, you must create a file json called `docs.json` 
+
+ * **DOC**:
+    * Title: title of page  
+    * SubTitle: text side of title.
+    * Description: Text more descriptive about this api.
+    * Domain: Original domain of api.
+    * Group: create Tab in docs to separate by categories.
+        * number of category and descriptions.
+   
+Example: 
+```
+{
+  "Title": "Default",
+  "SubTitle": "FakeApi",
+  "Description": "It is a demo what fake api can do.",
+  "Domain": "www.example.com",
+  "Group": {
+    "0": "Done",
+    "1": "Pending",
+    "2": "Development",
+    "3": "Test",
+    "-1": "Error"
+  }
+}
+```
+
+includes the `level`'s node inside `DOC` in your seed.
+
+example: 
+```
+{
+    "DOC": {
+        "level": "0",
+        "title": "Validate account",
+        "description": "This endpoint will validate the account changing flag 'pending' to 'activate'."
+    },
+    "INPUT": {
+        "email": "rodrigo.lopes@olx.com",
+        "token": "d019ccfd071164ae7ac8ca8a934a90e8b612"
+    },
+    "POST_201": {
+        "data": {
+            "success": true,
+            "message": "OK"
+        }
+    }
+}
+``` 
+
+The docs with category will render like this: 
+
+![Docs with texts_and_category](./docs/docs_05.png)
+
+P.S: By default the first tab always is the ERROR (if exists).
 
 ## Configuring *FakeApi* with *Supervisor*.
 
@@ -409,7 +465,7 @@ and inside you have so set the environment.
 
 ```
 [program:FakeApi]
-environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapiFAKE_API_CUSTOM=/var/www/fakeapi
+environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapi,FAKE_API_CUSTOM=/var/www/fakeapi
 directory=/var/www/fakeapi
 command=/var/www/fakeapi/server web
 autostart=true

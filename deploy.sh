@@ -30,12 +30,12 @@ cp -r "fakes" "$folderWWW"
 
 if [ -d "$folderBKP" ]; then
     # recover old configuration
-    cp -rf "$folderBKP/custom" "$folderWWW/"
-    cp -rf "$folderBKP/fakes/*" "$folderWWW/fakes/."
+    [ -d "$folderBKP/custom" ] || cp -rf "$folderBKP/custom" "$folderWWW/"
+    [ -d "$folderBKP/fakes" ] || cp -rf "$folderBKP/fakes/*" "$folderWWW/fakes/."
 else
     # create a custom configuration
     mkdir -p "$folderWWW/custom"
-    cp "conf" "$folderWWW/custom"
+    cp "conf" "$folderWWW/custom/"
 fi
 
 # copy binary
