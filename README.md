@@ -26,6 +26,8 @@ It is a simple way to mock your api response.
 * [Web documentation](#web-documentation)
 * [Web documentation category](#docs-with-category)
 * [Seed file for documentation](#seed-file-for-documentation)
+* [Slack integration](#slack-integration)
+* [WebHook Autoupdate](#webhook-auto-update)
 * [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor)
 * [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
@@ -454,6 +456,37 @@ The docs with category will render like this:
 ![Docs with texts_and_category](./docs/docs_05.png)
 
 P.S: By default the first tab always is the ERROR (if exists).
+
+## Slack integration ##
+    
+If you configure [WebHook auto update](#webhook-auto-update) you can notify by slack each push.
+
+```
+[slack]
+ACTIVE = true
+ICON = :ghost:
+API = https://hooks.slack.com/services/?????/??????/?????????????????
+BOT_NAME = Gopher
+BOT_ICON = https://golang.org/favicon.ico
+```
+
+## WebHook auto update
+    
+You can configure seeds to update automatically, at file `custom/conf/app.ini` you have to configuration,
+the configuration default are: 
+    
+```
+[webhook]
+hooks = stockequip
+
+[webhook.stockequip]
+CHANNEL = gobot
+SECRET = LoremBacon
+EVENT = Push Hook
+FOLDER = fake-api.stockequip.com
+REF = refs/heads/master
+PULL = true
+```    
 
 ## Configuring *FakeApi* with *Supervisor*.
 
