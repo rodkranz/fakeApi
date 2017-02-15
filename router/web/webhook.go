@@ -33,6 +33,10 @@ func Hook(ctx *context.Context) {
 		ctx.JSON(http.StatusBadRequest,
 			map[string]interface{}{
 				"message": "Secret not found!",
+				"info": map[string]interface{}{
+					"secret":    token,
+					"available": setting.WebHooks,
+				},
 			})
 		return
 	}
@@ -41,6 +45,10 @@ func Hook(ctx *context.Context) {
 		ctx.JSON(http.StatusBadRequest,
 			map[string]interface{}{
 				"message": "Not configured or this event!",
+				"info": map[string]interface{}{
+					"event":     event,
+					"available": confWH.Event,
+				},
 			})
 		return
 	}

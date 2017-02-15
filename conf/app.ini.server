@@ -1,0 +1,61 @@
+[app]
+APP_NAME = FakeApi: Api Fake for clients
+RUN_MODE = prod
+
+
+[server]
+PROTOCOL = http
+DOMAIN = 0.0.0.0
+ROOT_URL = %(PROTOCOL)s://%(DOMAIN)s:%(HTTP_PORT)s/
+HTTP_ADDR =
+HTTP_PORT = 9090
+LOCAL_ROOT_URL = http://%(DOMAIN):%(HTTP_PORT)s/
+CERT_FILE = custom/https/cert.pem
+KEY_FILE = custom/https/key.pem
+STATIC_ROOT_PATH = ./
+ENABLE_GZIP = true
+
+
+[fakeApi]
+SEED_EXTENSION = ".json"
+SEED_FOLDER = "fakes"
+
+
+[api]
+ALLOW_CROSS_DOMAIN = true
+
+
+[log]
+ROOT_PATH =
+MODE = console
+BUFFER_LEN = 10000
+LEVEL = Trace
+
+[log.console]
+LEVEL =
+
+[log.file]
+LEVEL =
+LOG_ROTATE = true
+MAX_LINES = 1000000
+MAX_SIZE_SHIFT = 28
+DAILY_ROTATE = true
+MAX_DAYS = 7
+
+
+[slack]
+ACTIVE = true
+API = https://hooks.slack.com/services/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
+BOT_NAME = Gopher
+BOT_ICON = https://golang.org/favicon.ico
+
+
+[webhook]
+hooks = stockequip
+
+[webhook.stockequip]
+CHANNEL = gobot
+SECRET = StockEquipLetMeInPlease
+EVENT = Push Hook
+FOLDER = fakes/fake-api.stockequip.com
+PULL = true

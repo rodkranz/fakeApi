@@ -2,11 +2,11 @@
 package slack
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 
+	"fmt"
 	"github.com/rodkranz/fakeApi/modules/setting"
 )
 

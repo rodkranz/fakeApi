@@ -1,86 +1,133 @@
 {{template "base/header" .}}
 <div class="container">
-    <div class="page-header slogan text-center" style="margin-top: 10px">
-        <h1>
-            Docs&nbsp;<small>fake api</small>
-        </h1>
-    </div>
 
-    <div class="alert alert-info" role="alert">
-        Domain: <strong>{{.Doc.Domain}}</strong>
-    </div>
+    {{if .Doc.Info.Error }}
+        <div class="page-header slogan text-center" style="margin-top: 10px">
+            <h1>
+                Docs&nbsp;<small>fake api</small>
+            </h1>
+        </div>
+        <div class="alert alert-info" role="alert">
+            Domain: <strong>{{- .Doc.Domain -}}</strong>
+         </div>
+    {{else}}
+         <div class="page-header slogan text-center" style="margin-top: 10px">
+             <h1>
+                 {{.Doc.Info.Title}}
+                 <small>{{.Doc.Info.SubTitle}}</small>
+             </h1>
+             <p class="text-muted">{{.Doc.Info.Description}}</p>
+         </div>
+         <div class="alert alert-info" role="alert">
+             Domain: <strong>{{.Doc.Info.Domain}}</strong>
+         </div>
+    {{end}}
 
-    {{range $url := .Doc.Indices}}
-        {{$elm := index $.Doc.Docs $url}}
-        <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}" id="table-{{$elm.Url | Marshal | SHA1}}">
-            <div class="panel-heading">
+    {{if not .IsSingle}}
+        <ul class="nav nav-tabs" role="docTabs">
+            {{range $lvl, $grp := .Doc.Groups}}
+                <li role="presentation">
+                    <a href="#tab-{{$lvl}}" aria-controls="tab-{{$lvl}}" role="tab" data-toggle="tab">
+                        {{if $.Doc.Info.Error }}
+                            {{if eq $lvl -1}}
+                                Error
+                            {{else}}
+                                Tab {{$lvl}}
+                            {{end}}
+                        {{else}}
+                            {{index $.Doc.Info.Group $lvl}}
+                        {{end}}
+                    </a>
+                </li>
+            {{end}}
+         </ul>
+    {{end}}
 
-                <a href="#table-{{$elm.Url | Marshal | SHA1}}">Url</a>:
-                <strong>{{$elm.Url}}</strong>
+    <div class="tab-content" style="margin-top: 10px">
+        {{range $lvl, $grp := .Doc.Groups}}
+            <div role="docTabs" class="tab-pane" id="tab-{{$lvl}}">
 
-                {{if not $elm.Error }}
-                    <button type="button"
-                            class="btn btn-default btn-xs pull-right"
-                            aria-label="Left Align"
-                            onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
-                    >
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                    </button>
-                {{end}}
-            </div>
-            <div class="panel-body">
-                <div>
-                    <h4>{{$elm.Title}}</h4>
-                    <p>{{$elm.Desc}}</p>
-                </div>
-                <dl>
-                    <dt>Path:</dt>
-                    <dd>{{$elm.Path}}</dd>
-                </dl>
+                {{range $url := $grp.Indices}}
+                    {{$elm := index $grp.Docs $url}}
+                    <div class="panel {{if $elm.Error}}panel-danger{{else}}panel-default{{end}}"
+                        id="table-{{$elm.Url | Marshal | SHA1}}">
+                        <div class="panel-heading">
 
-                {{if $elm.Error }}
-                <div class="alert alert-warning" role="alert">
-                    <strong>Warning!</strong> {{$elm.Error}}
-                </div>
-                {{end}}
+                            <a href="#table-{{$elm.Url | Marshal | SHA1}}">Url</a>:
+                            <strong>{{$elm.Url}}</strong>
 
-                <div class="panel-group" id="{{$elm.Url | Marshal | SHA1}}" role="tablist" aria-multiselectable="true">
-                    {{range $end := $elm.Endpoints}}
-
-                    {{$idHeading  := RandStringPrefix "heading" 32 }}
-                    {{$idCollapse := RandStringPrefix "collapse" 32 }}
-
-                    <div class="panel {{if not (eq $end.StatusCode 0)}}panel-default{{else}}panel-info{{end}}">
-                        <div class="panel-heading" role="tab" id="{{$idHeading}}">
-                            <h4 class="panel-title">
-                                <a class="collapsed"
-                                   role="button"
-                                   data-toggle="collapse"
-                                   data-parent="#{{$elm.Url | Marshal | SHA1}}"
-                                   href="#{{$idCollapse}}"
-                                   aria-expanded="false"
-                                   aria-controls="{{$idCollapse}}"
+                            {{if not $elm.Error }}
+                                <button type="button"
+                                        class="btn btn-default btn-xs pull-right"
+                                        aria-label="Left Align"
+                                        onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
                                 >
-                                    {{$end.Method}}
-                                    {{if not (eq $end.StatusCode 0)}}{{$end.StatusCode}}{{end}}
-                                </a>
-                            </h4>
+                                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                                </button>
+                            {{end}}
                         </div>
+                        <div class="panel-body">
+                            <div>
+                                <h4>{{$elm.Title}}</h4>
+                                <p>{{$elm.Desc}}</p>
+                            </div>
+                            <dl>
+                                <dt>Path:</dt>
+                                <dd>{{$elm.Path}}</dd>
+                            </dl>
 
-                        <div id="{{$idCollapse}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
-                             aria-labelledby="{{$idHeading}}">
-                            <div class="panel-body">
-                                <pre data-type="javascript">{{$end.Data | Marshal}}</pre>
+                            {{if $elm.Error }}
+                            <div class="alert alert-warning" role="alert">
+                                <strong>Warning!</strong> {{$elm.Error}}
+                            </div>
+                            {{end}}
+
+                            <div class="panel-group" id="{{$elm.Url | Marshal | SHA1}}" role="tablist" aria-multiselectable="true">
+                                {{range $end := $elm.Endpoints}}
+
+                                {{$idHeading  := RandStringPrefix "heading" 32 }}
+                                {{$idCollapse := RandStringPrefix "collapse" 32 }}
+
+                                <div class="panel {{if not (eq $end.StatusCode 0)}}panel-default{{else}}panel-info{{end}}">
+                                    <div class="panel-heading" role="tab" id="{{$idHeading}}">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed"
+                                               role="button"
+                                               data-toggle="collapse"
+                                               data-parent="#{{$elm.Url | Marshal | SHA1}}"
+                                               href="#{{$idCollapse}}"
+                                               aria-expanded="false"
+                                               aria-controls="{{$idCollapse}}"
+                                            >
+                                                {{$end.Method}}
+                                                {{if not (eq $end.StatusCode 0)}}{{$end.StatusCode}}{{end}}
+                                            </a>
+                                        </h4>
+                                    </div>
+
+                                    <div id="{{$idCollapse}}" class="panel-collapse collapse {{$elm.Url | Marshal | SHA1}}" role="tabpanel"
+                                         aria-labelledby="{{$idHeading}}">
+                                        <div class="panel-body">
+                                            <pre data-type="javascript">
+                                                {{- $end.Data | Marshal -}}
+                                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{end}}
                             </div>
                         </div>
                     </div>
-                    {{end}}
-                </div>
+                {{end}}
             </div>
-        </div>
-    {{end}}
+        {{end}}
+    </div>
 </div>
+
 <style>
+    html {
+        overflow-y: scroll;
+    }
     pre {
         padding: 5px;
         margin: 5px;
@@ -119,6 +166,14 @@
     }
 
     w.onload = function () {
+        if ($('[role="presentation"].active').length == 0) {
+            $('[role="docTabs"] a:first').tab('show')
+
+            if ($('[role="presentation"].active').length == 0) {
+                $('[role="docTabs"]:first').addClass('active')
+            }
+        }
+
         function injectHighlight(elm) {
             elm.innerHTML = syntaxHighlight(elm.innerHTML);
         }
