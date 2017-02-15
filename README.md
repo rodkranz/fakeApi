@@ -24,8 +24,11 @@ It is a simple way to mock your api response.
 * [Condition Status Code](#condition-status-code)
 * [List of links available (api)](#list-of-links-available)
 * [Web documentation](#web-documentation)
+* [Web documentation category](#docs-with-category)
 * [Seed file for documentation](#seed-file-for-documentation)
-* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor) - (writing...)
+* [Slack integration](#slack-integration)
+* [WebHook Autoupdate](#webhook-auto-update)
+* [FakeApi with Supervisor](#configuring-fakeapi-with-supervisor)
 * [FakeApi with Nginx](#configuring-fakeapi-with-nginx) - (writing...)
 
 ## How to Compile it
@@ -38,15 +41,15 @@ It is a simple way to mock your api response.
  You can just download and use, without compile anything.
 
 
-   Download for [Mac OSx](http://tmpcode.com/fake-api/fake-api_darwin_amd64.tar.gz)
+   Download for [Mac OSx](http://tmpcode.com/fake-api/darwin_amd64.tar.gz)
 
-   Download for [Linux x386](http://tmpcode.com/fake-api/fake-api_linux_386.tar.gz)
+   Download for [Linux x386](http://tmpcode.com/fake-api/linux_386.tar.gz)
 
-   Download for [Linux amd64](http://tmpcode.com/fake-api/fake-api_linux_amd64.tar.gz)
+   Download for [Linux amd64](http://tmpcode.com/fake-api/linux_amd64.tar.gz)
 
-   Download for [Windows x386](http://tmpcode.com/fake-api/fake-api_windows_386.tar.gz)
+   Download for [Windows x386](http://tmpcode.com/fake-api/windows_386.tar.gz)
 
-   Download for [Windows x64](http://tmpcode.com/fake-api/fake-api_windows_amd64.tar.gz)
+   Download for [Windows x64](http://tmpcode.com/fake-api/windows_amd64.tar.gz)
 
 
 ## Requirements to Build
@@ -346,7 +349,7 @@ The docs will be generate automatic
 You can use web page friendly if you access [http://localhost:9090/docs](http://localhost:9090/docs).
 this page will be generate in realtime the documents that you have in `JSONS` file.
 
-This is an example of page:
+This is a simple example of page:
 
 ![Docs Home Page](./docs/docs_01.png)
 
@@ -362,16 +365,15 @@ If the json has error the docs will render like this
 
 If you want to show more descriptions about your endpoint it is possible if you create a node `DOC` at you `Seed` files
 this node needs to have set `title` and `description`, you can see the example above.
-
+    
  * **DOC**:
-
+    * level: It is the category that this json belongs to. 
     * title: Title with little text about endpoint.
     * description: Text more descriptive about what your endpoint does.
  * **INPUT** :
 
     * The text saying what your endpoints are expecting to receive from client/frontend, it validate if format of request is equal what was written in seed.
      
-
 
 *P.S*: Seed file with comments:
 
@@ -398,6 +400,93 @@ The web page will be rendered this `seed` above like it:
 
 ![Docs with texts](./docs/docs_04.png)
 
+## Docs with Category ##
+Maybe you and to organize yours seed by categories, you must create a file json called `docs.json` 
+
+ * **DOC**:
+    * Title: title of page  
+    * SubTitle: text side of title.
+    * Description: Text more descriptive about this api.
+    * Domain: Original domain of api.
+    * Group: create Tab in docs to separate by categories.
+        * number of category and descriptions.
+   
+Example: 
+```
+{
+  "Title": "Default",
+  "SubTitle": "FakeApi",
+  "Description": "It is a demo what fake api can do.",
+  "Domain": "www.example.com",
+  "Group": {
+    "0": "Done",
+    "1": "Pending",
+    "2": "Development",
+    "3": "Test",
+    "-1": "Error"
+  }
+}
+```
+
+includes the `level`'s node inside `DOC` in your seed.
+
+example: 
+```
+{
+    "DOC": {
+        "level": "0",
+        "title": "Validate account",
+        "description": "This endpoint will validate the account changing flag 'pending' to 'activate'."
+    },
+    "INPUT": {
+        "email": "rodrigo.lopes@olx.com",
+        "token": "d019ccfd071164ae7ac8ca8a934a90e8b612"
+    },
+    "POST_201": {
+        "data": {
+            "success": true,
+            "message": "OK"
+        }
+    }
+}
+``` 
+
+The docs with category will render like this: 
+
+![Docs with texts_and_category](./docs/docs_05.png)
+
+P.S: By default the first tab always is the ERROR (if exists).
+
+## Slack integration ##
+    
+If you configure [WebHook auto update](#webhook-auto-update) you can notify by slack each push.
+
+```
+[slack]
+ACTIVE = true
+ICON = :ghost:
+API = https://hooks.slack.com/services/?????/??????/?????????????????
+BOT_NAME = Gopher
+BOT_ICON = https://golang.org/favicon.ico
+```
+
+## WebHook auto update
+    
+You can configure seeds to update automatically, at file `custom/conf/app.ini` you have to configuration,
+the configuration default are: 
+    
+```
+[webhook]
+hooks = stockequip
+
+[webhook.stockequip]
+CHANNEL = gobot
+SECRET = LoremBacon
+EVENT = Push Hook
+FOLDER = fake-api.stockequip.com
+REF = refs/heads/master
+PULL = true
+```    
 
 ## Configuring *FakeApi* with *Supervisor*.
 
@@ -405,11 +494,11 @@ You need to enter in folder `/etc/supervisor/conf.d` and create a file with name
 and inside you have so set the environment.
 
  * My app is in `/var/www/fakeApi`
- * My los are in `/var/log/fakeApi`
+ * My log is in `/var/log/fakeApi`
 
 ```
 [program:FakeApi]
-environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapiFAKE_API_CUSTOM=/var/www/fakeapi
+environment=MACARON_ENV=production,FAKE_API=/var/www/fakeapi,FAKE_API_CUSTOM=/var/www/fakeapi
 directory=/var/www/fakeapi
 command=/var/www/fakeapi/server web
 autostart=true
@@ -419,7 +508,7 @@ stdout_logfile=/var/log/fakeApi/out.log
 ```
 
 ## Configuring *FakeApi* with *Nginx*.
-c
+
 > I am writing this step ....
 
 ```

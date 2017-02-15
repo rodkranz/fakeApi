@@ -75,8 +75,8 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		http.StatusNotFound,
 		"Method in seed file not found.",
 		map[string]interface{}{
-			"status_code": ctx.Data["method"],
-			"method":      ctx.Data["statusCode"],
+			"status_code": ctx.Data["statusCode"],
+			"method":      ctx.Data["method"],
 			"domain":      fake.Domain,
 			"file_name":   path.Base(ctx.Data["seedFile"].(string)),
 		})
@@ -96,6 +96,7 @@ func loadContextBody(ctx *context.APIContext) {
 	defer ctx.Req.Body().ReadCloser()
 
 	if len(body) == 0 {
+		ctx.Data["Body"] = nil
 		return
 	}
 
@@ -110,12 +111,26 @@ func loadContextBody(ctx *context.APIContext) {
 	ctx.Data["Body"] = entityBody
 }
 
+func loadContextParam(ctx *context.APIContext) {
+	params := make(map[string]interface{}, len(ctx.Req.URL.Query()))
+	for k, v := range ctx.Req.URL.Query() {
+		if len(v) == 1 {
+			params[k] = v[0]
+		}
+	}
+	ctx.Data["Params"] = params
+}
+
 // checkInputData check if has "input" at seed and match if format is correct
 func checkInputData(ctx *context.APIContext) {
 	endpoint := ctx.Data["endpoints"].(map[string]interface{})
 	// check if have format for input.
 	entityExpected, has := endpoint["INPUT"]
 	if !has {
+		return
+	}
+
+	if ctx.Data["Body"] == nil {
 		return
 	}
 
@@ -168,12 +183,26 @@ func checkCondition(ctx *context.APIContext) {
 
 	for _, v := range conditions {
 		condition := v.(map[string]interface{})
-		if reflect.DeepEqual(ctx.Data["Body"], condition["DATA"]) {
-			ctx.Data["methodStatusCode"] = condition["ACTION"]
 
-			_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))
-			ctx.Data["statusCode"] = statusCode
-			return
+		if ctx.Data["Body"] != nil {
+			if reflect.DeepEqual(ctx.Data["Body"], condition["DATA"]) {
+				ctx.Data["methodStatusCode"] = condition["ACTION"]
+
+				_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))
+				ctx.Data["statusCode"] = statusCode
+				return
+			}
 		}
+
+		if ctx.Data["Params"] != nil {
+			fmt.Printf("OK \n")
+			if reflect.DeepEqual(ctx.Data["Params"], condition["DATA"]) {
+				ctx.Data["methodStatusCode"] = condition["ACTION"]
+				_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))
+				ctx.Data["statusCode"] = statusCode
+				return
+			}
+		}
+
 	}
 }

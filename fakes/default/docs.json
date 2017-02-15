@@ -1,0 +1,13 @@
+{
+  "Title": "Default",
+  "SubTitle": "FakeApi",
+  "Description": "It is a demo what fake api can do.",
+  "Domain": "www.example.com",
+  "Group": {
+    "0": "Done",
+    "1": "Pending",
+    "2": "Development",
+    "3": "Test",
+    "-1": "Error"
+  }
+}

@@ -1,3 +1,8 @@
 {
+    "DOC": {
+        "level": 2,
+        "title": "Default json",
+        "description": "This json is default to check if everything is ok"
+    },
     "GET_200": "Default Domain"
 }

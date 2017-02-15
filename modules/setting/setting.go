@@ -220,11 +220,16 @@ func NewContext() {
 	Slack.Icon = sec.Key("ICON").MustString("")
 
 	sec = Cfg.Section("webhook")
-	WebHookList = sec.Key("hooks").Strings(",")
+
+	WebHookList = sec.Key("HOOKS").Strings(",")
 	WebHooks = make(map[string]*Webhook, len(WebHookList))
-	for _, v := range Cfg.Section("webhook").KeysHash() {
+	for _, v := range WebHookList {
 		sec = Cfg.Section("webhook." + v)
 		secret := sec.Key("SECRET").MustString("")
+		if len(secret) == 0 {
+			log.Fatal(4, "Secret for webhook cannot be empty!")
+		}
+
 		WebHooks[secret] = &Webhook{
 			Name:    v,
 			Secret:  secret,
