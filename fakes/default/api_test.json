@@ -1,6 +1,6 @@
 {
     "DOC": {
-        "level": 2
+        "level": 3
     },
     "GET_200": {
         "message": "Status OK",

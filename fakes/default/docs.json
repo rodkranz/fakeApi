@@ -1,8 +1,8 @@
 {
-  "Title": "Stockequip",
+  "Title": "Default",
   "SubTitle": "FakeApi",
-  "Description": "Stockequip interface api for client and backend",
-  "Domain": "www.stockequip.com",
+  "Description": "It is a demo what fake api can do.",
+  "Domain": "www.example.com",
   "Group": {
     "0": "Done",
     "1": "Pending",

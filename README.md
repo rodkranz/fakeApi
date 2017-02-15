@@ -405,7 +405,7 @@ You need to enter in folder `/etc/supervisor/conf.d` and create a file with name
 and inside you have so set the environment.
 
  * My app is in `/var/www/fakeApi`
- * My los are in `/var/log/fakeApi`
+ * My log is in `/var/log/fakeApi`
 
 ```
 [program:FakeApi]
@@ -419,7 +419,7 @@ stdout_logfile=/var/log/fakeApi/out.log
 ```
 
 ## Configuring *FakeApi* with *Nginx*.
-c
+
 > I am writing this step ....
 
 ```
