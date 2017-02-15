@@ -41,15 +41,15 @@ It is a simple way to mock your api response.
  You can just download and use, without compile anything.
 
 
-   Download for [Mac OSx](http://tmpcode.com/fake-api/darwin_amd64.tar.gz)
+   Download for [Mac OSx](http://tmpcode.com/release/darwin_amd64.tar.gz)
 
-   Download for [Linux x386](http://tmpcode.com/fake-api/linux_386.tar.gz)
+   Download for [Linux x386](http://tmpcode.com/release/linux_386.tar.gz)
 
-   Download for [Linux amd64](http://tmpcode.com/fake-api/linux_amd64.tar.gz)
+   Download for [Linux amd64](http://tmpcode.com/release/linux_amd64.tar.gz)
 
-   Download for [Windows x386](http://tmpcode.com/fake-api/windows_386.tar.gz)
+   Download for [Windows x386](http://tmpcode.com/release/windows_386.tar.gz)
 
-   Download for [Windows x64](http://tmpcode.com/fake-api/windows_amd64.tar.gz)
+   Download for [Windows x64](http://tmpcode.com/release/windows_amd64.tar.gz)
 
 
 ## Requirements to Build
