@@ -18,7 +18,7 @@ func Load(p string, i entity.Endpoint) error {
 	}
 
 	if err = i.Unmarshal(data); err != nil {
-		return fmt.Errorf("Something is worng with file %s error %s", path.Base(p), err.Error())
+		return fmt.Errorf("Something is wrong with file %s error %s", path.Base(p), err.Error())
 	}
 
 	return nil
