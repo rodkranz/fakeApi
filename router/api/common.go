@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"path"
 	"reflect"
 
@@ -146,7 +147,7 @@ func loadContextBody(ctx *context.APIContext) {
 				continue
 			}
 
-			if strings.HasPrefix(line, strings.Repeat("-", 26) + token) {
+			if strings.HasPrefix(line, strings.Repeat("-", 26)+token) {
 				entityBody[name] = value
 				name, value = "", ""
 				continue
@@ -154,13 +155,13 @@ func loadContextBody(ctx *context.APIContext) {
 
 			if strings.Index(line, "Content-Disposition: form-data;") != -1 {
 				start := strings.Index(line, "name=") + 6
-				name = line[start:len(line)-1]
+				name = line[start : len(line)-1]
 				value = ""
 				i++
 				continue
 			}
 
-			if strings.HasPrefix(line, strings.Repeat("-", 26) + token + "--") {
+			if strings.HasPrefix(line, strings.Repeat("-", 26)+token+"--") {
 				i = len(lines)
 				continue
 			}
