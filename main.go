@@ -13,7 +13,7 @@ import (
 	"github.com/rodkranz/fakeApi/modules/setting"
 )
 
-const VER = "1.3.2"
+const VER = "1.4.0"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
