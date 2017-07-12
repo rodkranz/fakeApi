@@ -149,11 +149,11 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 
 	return func(ctx *macaron.Context) {
 		api := &ApiFake{
-			Delay:   0,
-			Domain:  "default",
-			Default: opt.DefaultApi,
-			Folder:  opt.BaseFolder,
-			Context: ctx,
+			Delay:         0,
+			Domain:        "default",
+			Default:       opt.DefaultApi,
+			Folder:        opt.BaseFolder,
+			Context:       ctx,
 			ResponseIndex: -1,
 		}
 

@@ -76,7 +76,7 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		list := []interface{}{}
 
 		for key, data := range endpoint {
-			if strings.Index(key, methodStatusCode + ":") > -1 {
+			if strings.Index(key, methodStatusCode+":") > -1 {
 				list = append(list, data)
 			}
 		}
@@ -86,7 +86,6 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 			return list[randPosition]
 		}
 	}
-
 
 	// return 404 if data doesn't exist
 	ctx.Error(
@@ -231,7 +230,7 @@ func checkInputData(ctx *context.APIContext) {
 		"Input format is invalid with in documantation.",
 		map[string]interface{}{
 			"file_name": path.Base(ctx.Data["seedFile"].(string)),
-			"expected":   entityExpected,
+			"expected":  entityExpected,
 			"received":  entityBody,
 		})
 }
