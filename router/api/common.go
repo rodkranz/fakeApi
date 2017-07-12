@@ -7,8 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"path"
 	"reflect"
+	"strings"
 
 	"github.com/rodkranz/fakeApi/modules/base"
 	"github.com/rodkranz/fakeApi/modules/context"
@@ -70,6 +72,21 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 		return data
 	}
 
+	if len(endpoint) > 1 {
+		list := []interface{}{}
+
+		for key, data := range endpoint {
+			if strings.Index(key, methodStatusCode+":") > -1 {
+				list = append(list, data)
+			}
+		}
+
+		if len(list) > 0 {
+			randPosition := base.RandInt(0, len(list))
+			return list[randPosition]
+		}
+	}
+
 	// return 404 if data doesn't exist
 	ctx.Error(
 		http.StatusNotFound,
@@ -101,14 +118,78 @@ func loadContextBody(ctx *context.APIContext) {
 	}
 
 	entityBody := make(map[string]interface{})
-	if err := json.Unmarshal(body, &entityBody); err != nil {
-		ctx.Error(
-			http.StatusBadRequest,
-			err.Error(), nil,
-		)
+	contentType := ctx.Req.Header.Get("Content-Type")
+
+	// try to parse json format
+	if strings.Index(contentType, "application/json") != -1 {
+		if err := json.Unmarshal(body, &entityBody); err != nil {
+			ctx.Error(
+				http.StatusBadRequest,
+				err.Error(), nil,
+			)
+			return
+		}
+		ctx.Data["Body"] = entityBody
 		return
 	}
-	ctx.Data["Body"] = entityBody
+
+	// try to parse form-data format
+	if strings.Index(contentType, "application/x-www-form-urlencoded") != -1 {
+		values, err := url.ParseQuery(string(body))
+		if err != nil {
+			ctx.Error(
+				http.StatusBadRequest,
+				err.Error(), nil,
+			)
+			return
+		}
+
+		for key, val := range values {
+			entityBody[key] = val[0]
+		}
+
+		ctx.Data["Body"] = entityBody
+		return
+	}
+
+	if strings.Index(contentType, "multipart/form-data") != -1 {
+		lines := strings.Split(string(body), string("\n"))
+
+		var token, name, value string
+		for i := 0; i < len(lines); i++ {
+			line := strings.Trim(lines[i], "\n\r")
+			if len(token) == 0 && strings.HasPrefix(line, strings.Repeat("-", 26)) {
+				token = strings.TrimSpace(line[26:])
+				continue
+			}
+
+			if strings.HasPrefix(line, strings.Repeat("-", 26)+token) {
+				entityBody[name] = value
+				name, value = "", ""
+				continue
+			}
+
+			if strings.Index(line, "Content-Disposition: form-data;") != -1 {
+				start := strings.Index(line, "name=") + 6
+				name = line[start : len(line)-1]
+				value = ""
+				i++
+				continue
+			}
+
+			if strings.HasPrefix(line, strings.Repeat("-", 26)+token+"--") {
+				i = len(lines)
+				continue
+			}
+
+			value += line
+		}
+
+		ctx.Data["Body"] = entityBody
+		return
+	}
+
+	ctx.Data["Body"] = nil
 }
 
 func loadContextParam(ctx *context.APIContext) {
@@ -118,6 +199,7 @@ func loadContextParam(ctx *context.APIContext) {
 			params[k] = v[0]
 		}
 	}
+
 	ctx.Data["Params"] = params
 }
 
@@ -148,7 +230,7 @@ func checkInputData(ctx *context.APIContext) {
 		"Input format is invalid with in documantation.",
 		map[string]interface{}{
 			"file_name": path.Base(ctx.Data["seedFile"].(string)),
-			"exected":   entityExpected,
+			"expected":  entityExpected,
 			"received":  entityBody,
 		})
 }
@@ -165,8 +247,12 @@ func checkMethodAndStatus(ctx *context.APIContext, fake *fakeApi.ApiFake) {
 	// set in context to share with application
 	ctx.Data["method"] = method
 	ctx.Data["statusCode"] = statusCode
-	ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v", method, statusCode)
 
+	if fake.ResponseIndex != -1 {
+		ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v:%v", method, statusCode, fake.ResponseIndex)
+	} else {
+		ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v", method, statusCode)
+	}
 }
 
 // checkCondition if has condition in seed file
@@ -195,7 +281,6 @@ func checkCondition(ctx *context.APIContext) {
 		}
 
 		if ctx.Data["Params"] != nil {
-			fmt.Printf("OK \n")
 			if reflect.DeepEqual(ctx.Data["Params"], condition["DATA"]) {
 				ctx.Data["methodStatusCode"] = condition["ACTION"]
 				_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))

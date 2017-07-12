@@ -23,11 +23,12 @@ type ApiFakeOptions struct {
 
 type ApiFake struct {
 	*macaron.Context
-	Default string
-	Folder  string
-	Domain  string
-	Delay   int
-	Headers map[string]string
+	Default       string
+	Folder        string
+	Domain        string
+	Delay         int
+	Headers       map[string]string
+	ResponseIndex int
 }
 
 // GetMethodAndStatusCode return method, status code and bool if found or not
@@ -58,6 +59,21 @@ func (a *ApiFake) GetSeedPath(seed string) (string, error) {
 	}
 
 	return filePath, nil
+}
+
+// RegisterResponseSlice define position of slice for response 'X-Fake-Response-Index'
+func (a *ApiFake) registerResponseSlice() {
+	responseIndex, has := a.getHeaderData("X-Fake-Response-Index")
+	if !has {
+		return
+	}
+	// try to convert of string to int64 if has error keep 0 delay
+	i, err := strconv.ParseInt(responseIndex, 10, 32)
+	if err != nil {
+		return
+	}
+
+	a.ResponseIndex = int(i)
 }
 
 // RegisterDomain change domain 'default' to 'X-Fake-Domain'
@@ -120,7 +136,6 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 	if isNotExist(opt.BaseFolder) {
 		if err := os.Mkdir(opt.BaseFolder, 0755); err != nil {
 			log.Fatal(4, "Please create a 'fakes' folder: [%v]", opt.BaseFolder)
-			log.Fatal(4, "Please create a 'fakes' folder: [%v]", opt.BaseFolder)
 		}
 	}
 
@@ -134,16 +149,18 @@ func Register(opt ApiFakeOptions) macaron.Handler {
 
 	return func(ctx *macaron.Context) {
 		api := &ApiFake{
-			Delay:   0,
-			Domain:  "default",
-			Default: opt.DefaultApi,
-			Folder:  opt.BaseFolder,
-			Context: ctx,
+			Delay:         0,
+			Domain:        "default",
+			Default:       opt.DefaultApi,
+			Folder:        opt.BaseFolder,
+			Context:       ctx,
+			ResponseIndex: -1,
 		}
 
 		// AutoConfig load method itself
 		api.registerDomain()
 		api.registerDelay()
+		api.registerResponseSlice()
 
 		// Share FakeApi Module for all handlers
 		ctx.Map(api)
