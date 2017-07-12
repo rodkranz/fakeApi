@@ -2,25 +2,25 @@
 <div class="container">
 
     {{if .Doc.Info.Error }}
-    <div class="page-header slogan text-center" style="margin-top: 10px">
-        <h1>
-            Docs&nbsp;<small>fake api</small>
-        </h1>
-    </div>
-    <div class="alert alert-info" role="alert">
-        Domain: <strong>{{- .Doc.Domain -}}</strong>
-    </div>
+        <div class="page-header slogan text-center" style="margin-top: 10px">
+            <h1>
+                Docs&nbsp;<small>fake api</small>
+            </h1>
+        </div>
+        <div class="alert alert-info" role="alert">
+            Domain: <strong>{{- .Doc.Domain -}}</strong>
+        </div>
     {{else}}
-    <div class="page-header slogan text-center" style="margin-top: 10px">
-        <h1>
-            {{.Doc.Info.Title}}
-            <small>{{.Doc.Info.SubTitle}}</small>
-        </h1>
-        <p class="text-muted">{{.Doc.Info.Description}}</p>
-    </div>
-    <div class="alert alert-info" role="alert">
-        Domain: <strong>{{.Doc.Info.Domain}}</strong>
-    </div>
+        <div class="page-header slogan text-center" style="margin-top: 10px">
+            <h1>
+                {{.Doc.Info.Title}}
+                <small>{{.Doc.Info.SubTitle}}</small>
+            </h1>
+            <p class="text-muted">{{.Doc.Info.Description}}</p>
+        </div>
+        <div class="alert alert-info" role="alert">
+            Domain: <strong>{{.Doc.Info.Domain}}</strong>
+        </div>
     {{end}}
 
     {{if not .IsSingle}}
@@ -29,13 +29,13 @@
         <li role="presentation">
             <a href="#tab-{{$lvl}}" aria-controls="tab-{{$lvl}}" role="tab" data-toggle="tab">
                 {{if $.Doc.Info.Error }}
-                {{if eq $lvl -1}}
-                Error
+                    {{if eq $lvl -1}}
+                        Error
+                    {{else}}
+                        Tab {{$lvl}}
+                    {{end}}
                 {{else}}
-                Tab {{$lvl}}
-                {{end}}
-                {{else}}
-                {{index $.Doc.Info.Group $lvl}}
+                    {{index $.Doc.Info.Group $lvl}}
                 {{end}}
             </a>
         </li>
@@ -122,9 +122,9 @@
                                  role="tabpanel"
                                  aria-labelledby="{{$idHeading}}">
                                 <div class="panel-body">
-                                            <pre data-type="javascript">
-                                                {{- $end.Data | Marshal -}}
-                                            </pre>
+                                    <pre data-type="javascript">
+                                        {{- $end.Data | Marshal -}}
+                                    </pre>
                                 </div>
                             </div>
                         </div>
