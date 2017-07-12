@@ -33,7 +33,7 @@ func FakeApi(ctx *context.APIContext, fakeApi *fakeApi.ApiFake) {
 		return
 	}
 
-	// validate if post/put/delete has the same format of input
+	// validate if post/put/delete has the same format of inputq
 	checkInputData(ctx)
 	if ctx.Written() {
 		return

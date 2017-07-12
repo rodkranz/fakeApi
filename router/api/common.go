@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 	"reflect"
+	"strings"
 
 	"github.com/rodkranz/fakeApi/modules/base"
 	"github.com/rodkranz/fakeApi/modules/context"
@@ -70,6 +71,22 @@ func getDataByHeaderResponseCode(ctx *context.APIContext, fake *fakeApi.ApiFake)
 	if data, has := endpoint[methodStatusCode]; has {
 		return data
 	}
+
+	if len(endpoint) > 1 {
+		list := []interface{}{}
+
+		for key, data := range endpoint {
+			if strings.Index(key, methodStatusCode + ":") > -1 {
+				list = append(list, data)
+			}
+		}
+
+		if len(list) > 0 {
+			randPosition := base.RandInt(0, len(list))
+			return list[randPosition]
+		}
+	}
+
 
 	// return 404 if data doesn't exist
 	ctx.Error(
@@ -183,6 +200,7 @@ func loadContextParam(ctx *context.APIContext) {
 			params[k] = v[0]
 		}
 	}
+
 	ctx.Data["Params"] = params
 }
 
@@ -213,7 +231,7 @@ func checkInputData(ctx *context.APIContext) {
 		"Input format is invalid with in documantation.",
 		map[string]interface{}{
 			"file_name": path.Base(ctx.Data["seedFile"].(string)),
-			"exected":   entityExpected,
+			"expected":   entityExpected,
 			"received":  entityBody,
 		})
 }
@@ -230,8 +248,12 @@ func checkMethodAndStatus(ctx *context.APIContext, fake *fakeApi.ApiFake) {
 	// set in context to share with application
 	ctx.Data["method"] = method
 	ctx.Data["statusCode"] = statusCode
-	ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v", method, statusCode)
 
+	if fake.ResponseIndex != -1 {
+		ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v:%v", method, statusCode, fake.ResponseIndex)
+	} else {
+		ctx.Data["methodStatusCode"] = fmt.Sprintf("%v_%v", method, statusCode)
+	}
 }
 
 // checkCondition if has condition in seed file
@@ -260,7 +282,6 @@ func checkCondition(ctx *context.APIContext) {
 		}
 
 		if ctx.Data["Params"] != nil {
-			fmt.Printf("OK \n")
 			if reflect.DeepEqual(ctx.Data["Params"], condition["DATA"]) {
 				ctx.Data["methodStatusCode"] = condition["ACTION"]
 				_, statusCode := base.SplitMethodAndStatus(condition["ACTION"].(string))

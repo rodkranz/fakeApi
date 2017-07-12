@@ -54,16 +54,27 @@
                         <div class="panel-heading">
 
                             <a href="#table-{{$elm.Url | Marshal | SHA1}}">Url</a>:
-                            <strong>{{$elm.Url}}</strong>
+                            <input type="text" style="width: 350px;" value="{{$elm.Url}}" /></strong>
 
                             {{if not $elm.Error }}
-                                <button type="button"
-                                        class="btn btn-default btn-xs pull-right"
-                                        aria-label="Left Align"
-                                        onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
-                                >
-                                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                                </button>
+                                <div class="pull-right">
+                                    <button type="button"
+                                            class="btn btn-default btn-xs"
+                                            aria-label="Left Align"
+                                            onclick="$('.{{$elm.Url | Marshal | SHA1}}').collapse('toggle');"
+                                    >
+                                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                                    </button>
+                                |
+                                    <a type="button"
+                                            class="btn btn-primary btn-xs"
+                                            aria-label="Left Align"
+                                            href="{{$elm.Url}}"
+                                            target="_blank"
+                                        >
+                                        <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                                    </a>
+                                </div>
                             {{end}}
                         </div>
                         <div class="panel-body">

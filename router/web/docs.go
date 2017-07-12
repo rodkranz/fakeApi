@@ -25,6 +25,7 @@ func Docs(ctx *context.Context, fakeApi *fakeApi.ApiFake) {
 
 	ctx.Data["Title"] = "[Docs FakeApi] " + fakeApi.Domain
 	ctx.Data["Doc"] = docs
+	ctx.Data["Domain"] = fakeApi.Domain
 	ctx.Data["IsSingle"] = len(docs.Groups) == 1
 
 	ctx.HTML(http.StatusOK, DOCS_TEMPLATE)
