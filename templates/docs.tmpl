@@ -212,15 +212,14 @@
             $('.link').each(function (key, elm) {
                 $(elm).click(function () {
                     $(elm).select();
+                    var subElm = $(elm).next('span');
 
-                    var msg = 'Oops, unable to copy';
                     try {
-                        msg = (document.execCommand('copy') ? 'The text was copied' : 'The text selected.');
+                        subElm.html(document.execCommand('copy') ? 'The text was copied' : 'The text selected.');
                     } catch (err) {
-                        console.error(err);
+                        subElm.html('The text selected');
                     }
 
-                    $(elm).next('span').html(msg);
                     if (alerts[$(elm).val()]) {
                         clearTimeout(alerts[$(elm).val()]);
                     }
@@ -229,7 +228,6 @@
                         $(elm).next('span').html('');
                     }, 5000);
                 });
-                console.log(elm);
             });
 
 
