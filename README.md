@@ -41,15 +41,15 @@ It is a simple way to mock your api response.
  You can just download and use, without compile anything.
 
 
-   Download for [Mac OSx](http://rodrigokranz.com/releases/darwin_amd64.zip)
+   Download for [Mac OSx](https://www.dropbox.com/s/6rnontns4510wbo/darwin_amd64.tar.gz?dl=0)
 
-   Download for [Linux x386](http://rodrigokranz.com/releases/linux_386.zip)
+   Download for [Linux x386](https://www.dropbox.com/s/ehf4kjqq9iex8oh/linux_386.tar.gz?dl=0)
 
-   Download for [Linux amd64](http://rodrigokranz.com/releases/linux_amd64.zip)
+   Download for [Linux amd64](https://www.dropbox.com/s/j2yoxcsnlhykdow/linux_amd64.tar.gz?dl=0)
 
-   Download for [Windows x386](http://rodrigokranz.com/releases/windows_386.zip)
+   Download for [Windows x386](https://www.dropbox.com/s/4ygsrcqgaylurwu/windows_386.tar.gz?dl=0)
 
-   Download for [Windows x64](http://rodrigokranz.com/releases/windows_amd64.zip)
+   Download for [Windows x64](https://www.dropbox.com/s/y5xhtcdw7gvtd41/windows_amd64.tar.gz?dl=0)
 
 
 ## Requirements to Build
